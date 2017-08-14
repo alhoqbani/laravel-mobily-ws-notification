@@ -2,30 +2,39 @@
 
 namespace NotificationChannels\MobilyWs;
 
-use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 use Illuminate\Notifications\Notification;
 
 class MobilyWsChannel
 {
-    public function __construct()
+    /** @var MobilyWsApi */
+    private $api;
+
+    /**
+     * MobilyWsChannel constructor.
+     *
+     * @param MobilyWsApi $mobilyWs
+     */
+    public function __construct(MobilyWsApi $mobilyWs)
     {
-        // Initialisation code here
+        $this->api = $mobilyWs;
     }
 
     /**
      * Send the given notification.
      *
-     * @param mixed                                  $notifiable
-     * @param \Illuminate\Notifications\Notification $notification
+     * @param mixed        $notifiable
+     * @param Notification $notification
      *
-     * @throws CouldNotSendNotification
+     * @return string
+     *
      */
     public function send($notifiable, Notification $notification)
     {
-        //$response = [a call to the api of your notification send]
+        $number = $notifiable->routeNotificationFor('MobilyWs') ?: 'phone_number';
 
-//        if ($response->error) { // replace this by the code need to check for errors
-//            throw CouldNotSendNotification::serviceRespondedWithAnError($response);
-//        }
+        return $this->api->send([
+            'msg' =>    $notification->toMobilyWs($notifiable),
+            'numbers' => $notifiable->{$number},
+        ]);
     }
 }

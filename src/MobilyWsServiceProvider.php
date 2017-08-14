@@ -2,6 +2,7 @@
 
 namespace NotificationChannels\MobilyWs;
 
+use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 
 class MobilyWsServiceProvider extends ServiceProvider
@@ -11,23 +12,18 @@ class MobilyWsServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Bootstrap code here.
-
-        /*
-         * Here's some example code we use for the pusher package.
-
-        $this->app->when(Channel::class)
-            ->needs(Pusher::class)
+        $this->app->when(MobilyWsChannel::class)
+            ->needs(MobilyWsApi::class)
             ->give(function () {
-                 $pusherConfig = config('broadcasting.connections.pusher');
+                $mobilyWsConfig = config('mobilyws');
 
-                return new Pusher(
-                    $pusherConfig['key'],
-                    $pusherConfig['secret'],
-                    $pusherConfig['app_id']
+                return new MobilyWsApi(
+                    new MobilyWsConfig($mobilyWsConfig),
+                    new Client(
+                        $mobilyWsConfig['guzzle']['client']
+                    )
                 );
             });
-         */
     }
 
     /**
