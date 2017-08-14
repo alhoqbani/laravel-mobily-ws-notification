@@ -118,9 +118,9 @@ class ApiTest extends \PHPUnit_Framework_TestCase
     {
         return array_merge(
             [
-                'mobile'          => env('MOBILY_WS_MOBILE'),
-                'password'        => env('MOBILY_WS_PASSWORD'),
-                'sender'          => env('MOBILY_WS_SENDER'),
+                'mobile'          => '96650000',
+                'password'        => '123',
+                'sender'          => 'sender',
                 'applicationType' => 68,
                 'lang'            => '3',
                 'guzzle'          => [
