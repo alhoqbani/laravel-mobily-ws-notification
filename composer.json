@@ -1,0 +1,39 @@
+{
+    "name": "alhoqbani/laravel-mobily-ws-notification",
+    "description": "Send SMS notifications using mobily.ws with Laravel 5.4",
+    "homepage": "https://github.com/alhoqbani/laravel-mobily-ws-notification",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Hamoud Alhoqbani",
+            "email": "h.alhoqbani@gmail.com",
+            "homepage": "https://github.com/alhoqbani",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.4",
+        "illuminate/notifications": "^5.4",
+        "illuminate/support": "^5.4"
+    },
+    "require-dev": {
+        "mockery/mockery": "0.9.*",
+        "phpunit/phpunit": "~5.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "NotificationChannels\\MobilyWs\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "NotificationChannels\\MobilyWs\\Test\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
