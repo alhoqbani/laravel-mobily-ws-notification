@@ -25,7 +25,5 @@ class MobilyWsConfig
         if (isset($this->config[$name])) {
             return $this->config[$name];
         }
-
-        return null;
     }
 }

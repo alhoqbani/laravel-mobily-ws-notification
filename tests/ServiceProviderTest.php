@@ -26,7 +26,7 @@ class ServiceProviderTest extends MockeryTestCase
     /** @test */
     public function it_gives_an_instantiated_mobily_ws_api_object_when_the_channel_asks_for_it()
     {
-        $configArray = include __DIR__ . '/../config/mobilyws.php';
+        $configArray = include __DIR__.'/../config/mobilyws.php';
 
         $this->app->shouldReceive('offsetGet')
             ->with('config')
@@ -56,5 +56,4 @@ interface App extends Application, ArrayAccess
 
 function config_path()
 {
-
 }

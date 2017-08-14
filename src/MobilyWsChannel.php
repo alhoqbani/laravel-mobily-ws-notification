@@ -3,9 +3,8 @@
 namespace NotificationChannels\MobilyWs;
 
 use Illuminate\Events\Dispatcher;
-use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Notifications\Notification;
-use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
+use Illuminate\Notifications\Events\NotificationFailed;
 
 class MobilyWsChannel
 {

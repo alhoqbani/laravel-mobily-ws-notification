@@ -3,15 +3,15 @@
 namespace NotificationChannels\MobilyWs\Test;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
+use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
+use GuzzleHttp\Handler\MockHandler;
+use function GuzzleHttp\Psr7\parse_query;
 use NotificationChannels\MobilyWs\MobilyWsApi;
 use NotificationChannels\MobilyWs\MobilyWsConfig;
-use function GuzzleHttp\Psr7\parse_query;
+use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 
 class ApiTest extends \PHPUnit_Framework_TestCase
 {
@@ -39,12 +39,12 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         ];
         $client = new Client($config);
         $api = new MobilyWsApi($mobileWsConfig, $client);
-        
+
         $params = [
             'msg' => 'SMS Text Message',
             'numbers' => '966550000000',
         ];
-        
+
         $api->send($params);
     }
 
@@ -82,7 +82,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('/api/msgSend.php', $request->getRequestTarget());
         $this->assertArraySubset($params, parse_query($request->getBody()->getContents()));
     }
-    
+
     /** @test */
     public function it_throw_an_exception_when_response_is_not_ok()
     {
@@ -97,20 +97,21 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         ];
         $client = new Client($config);
         $api = new MobilyWsApi($mobileWsConfig, $client);
-        
+
         $params = [
             'msg' => 'SMS Text Message',
             'numbers' => '966550000000',
         ];
-        
+
         try {
             $api->send($params);
         } catch (CouldNotSendNotification $e) {
             $this->assertContains('Request to mobily.ws failed', $e->getMessage());
             $this->assertEquals('403', $e->getCode());
+
             return;
         }
-        
+
         $this->fail('CouldNotSendNotification exception was not raised');
     }
 
