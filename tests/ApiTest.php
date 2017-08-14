@@ -117,7 +117,22 @@ class ApiTest extends \PHPUnit_Framework_TestCase
     private function getConfigs(array $overrides = [])
     {
         return array_merge(
-            include __DIR__.'/../config/mobilyws.php',
+            [
+                'mobile'          => env('MOBILY_WS_MOBILE'),
+                'password'        => env('MOBILY_WS_PASSWORD'),
+                'sender'          => env('MOBILY_WS_SENDER'),
+                'applicationType' => 68,
+                'lang'            => '3',
+                'guzzle'          => [
+                    'client'  => [
+                        'base_uri' => 'http://mobily.ws/api/',
+                    ],
+                    'request' => [
+                        'http_errors' => true,
+                        'debug'       => false,
+                    ],
+                ],
+            ],
             $overrides
         );
     }
