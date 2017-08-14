@@ -9,7 +9,6 @@ use Illuminate\Notifications\Notification;
 use NotificationChannels\MobilyWs\MobilyWsApi;
 use NotificationChannels\MobilyWs\MobilyWsChannel;
 use Illuminate\Notifications\Events\NotificationFailed;
-use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 
 /**
  * @property \Mockery\MockInterface                               api
@@ -28,9 +27,9 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
         $this->events = Mockery::mock(Dispatcher::class);
 
         $this->channel = new MobilyWsChannel($this->api, $this->events);
-        
+
         $this->notification = new TestNotification();
-        
+
         $this->notifiable = new TestNotifiable();
     }
 
@@ -54,7 +53,7 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
         $response = $this->channel->send($this->notifiable, $this->notification);
         $this->assertEquals('تمت عملية الإرسال بنجاح', $response);
     }
-    
+
     /** @test */
     public function it_fires_failure_event_on_failure()
     {
@@ -64,10 +63,9 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
         ];
         $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 5, 'message' => 'كلمة المرور الخاصة بالحساب غير صحيحة']);
         $this->events->shouldReceive('fire')->with(Mockery::type(NotificationFailed::class));
-        
+
         $this->channel->send($this->notifiable, $this->notification);
     }
-    
 }
 
 class TestNotifiable

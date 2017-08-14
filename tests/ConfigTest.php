@@ -51,6 +51,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($requestOptions, $mobilyWsConfig->request);
     }
+
     private function getConfigs(array $overrides = [])
     {
         return array_merge(
