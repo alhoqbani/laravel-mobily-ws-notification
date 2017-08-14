@@ -56,27 +56,6 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
     }
     
     /** @test */
-    public function it_throw_an_exception_when_mobily_ws_return_an_error()
-    {
-        $this->markTestSkipped('Confirm removing mobilyWsRespondedWithAnError exception');
-        $params = [
-            'msg' => 'Text message',
-            'numbers' => '966550000000',
-        ];
-        $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 3, 'message' => 'رصيدك غير كافي لإتمام عملية الإرسال']);
-        $this->events->shouldReceive('fire')->with(Mockery::type(NotificationFailed::class));
-    
-        try {
-            $this->channel->send($this->notifiable, $this->notification);
-        } catch (CouldNotSendNotification $e) {
-            $this->assertContains('رصيدك غير كافي لإتمام عملية الإرسال', $e->getMessage());
-            return;
-        }
-        
-        $this->fail('CouldNotSendNotification exception was not raised');
-    }
-    
-    /** @test */
     public function it_fires_failure_event_on_failure()
     {
         $params = [

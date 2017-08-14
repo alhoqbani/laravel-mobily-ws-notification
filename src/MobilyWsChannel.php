@@ -52,7 +52,5 @@ class MobilyWsChannel
         $this->events->fire(
             new NotificationFailed($notifiable, $notification, 'mobily-ws', $response)
         );
-
-//        throw CouldNotSendNotification::mobilyWsRespondedWithAnError($response['code'], $response['message']);
     }
 }
