@@ -5,6 +5,7 @@ namespace NotificationChannels\MobilyWs\Test;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 use Mockery;
+use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 use NotificationChannels\MobilyWs\MobilyWsApi;
 use NotificationChannels\MobilyWs\MobilyWsChannel;
 
@@ -42,11 +43,31 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
           'msg' => 'Text message',
           'numbers' => '966550000000',
         ];
-        $this->api->shouldReceive('send')->with($params)->andReturn('تمت عملية الإرسال بنجاح');
+        $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 1, 'message' => 'تمت عملية الإرسال بنجاح']);
 
         $response = $this->channel->send($this->notifiable, $this->notification);
         $this->assertEquals('تمت عملية الإرسال بنجاح', $response);
     }
+    
+    /** @test */
+    public function it_throw_an_exception_when_mobily_ws_return_an_error()
+    {
+        $params = [
+            'msg' => 'Text message',
+            'numbers' => '966550000000',
+        ];
+        $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 3, 'message' => 'رصيدك غير كافي لإتمام عملية الإرسال']);
+        
+        try {
+            $this->channel->send($this->notifiable, $this->notification);
+        } catch (CouldNotSendNotification $e) {
+            $this->assertContains('رصيدك غير كافي لإتمام عملية الإرسال', $e->getMessage());
+            return;
+        }
+        
+        $this->fail('CouldNotSendNotification exception was not raised');
+    }
+    
 }
 
 class TestNotifiable

@@ -84,36 +84,6 @@ class ApiTest extends \PHPUnit_Framework_TestCase
     }
     
     /** @test */
-    public function it_throw_an_exception_when_mobily_ws_return_an_error()
-    {
-        $mobileWsConfig = new MobilyWsConfig($this->getConfigs());
-        $mock = new MockHandler([
-            new Response(200, [], 4),
-        ]);
-        $handler = HandlerStack::create($mock);
-        $config = [
-            'base_uri' => 'http://mobily.ws/api/',
-            'handler' => $handler,
-        ];
-        $client = new Client($config);
-        $api = new MobilyWsApi($mobileWsConfig, $client);
-        
-        $params = [
-            'msg' => 'SMS Text Message',
-            'numbers' => '966550000000',
-        ];
-        
-        try {
-            $api->send($params);
-        } catch (CouldNotSendNotification $e) {
-            $this->assertContains('رقم الجوال (إسم المستخدم) غير صحيح', $e->getMessage());
-            return;
-        }
-        
-        $this->fail('CouldNotSendNotification exception was not raised');
-    }
-    
-    /** @test */
     public function it_throw_an_exception_when_response_is_not_ok()
     {
         $mobileWsConfig = new MobilyWsConfig($this->getConfigs());

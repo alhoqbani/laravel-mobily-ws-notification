@@ -29,7 +29,7 @@ class MobilyWsApi
     /**
      * @param array $params
      *
-     * @return string
+     * @return array
      *
      * @throws CouldNotSendNotification
      */
@@ -42,12 +42,10 @@ class MobilyWsApi
             $response = $this->http->post($endpoint, $payload);
 
             if ($response->getStatusCode() == 200) {
-                $code = (string) $response->getBody();
-                if ($code == 1) {
-                    return 'تمت عملية الإرسال بنجاح';
-                } else {
-                    throw CouldNotSendNotification::mobilyWsRespondedWithAnError($code, $this->msgSendResponse($code));
-                }
+                return [
+                    'code' => $code = (string) $response->getBody(),
+                    'message' => $this->msgSendResponse($code),
+                ];
             }
             throw CouldNotSendNotification::someErrorWhenSendingSms($response);
         } catch (RequestException $exception) {
