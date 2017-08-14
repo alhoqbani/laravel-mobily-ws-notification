@@ -48,6 +48,7 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
           'msg' => 'Text message',
           'numbers' => '966550000000',
         ];
+
         $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 1, 'message' => 'تمت عملية الإرسال بنجاح']);
 
         $response = $this->channel->send($this->notifiable, $this->notification);
@@ -98,7 +99,7 @@ class TestNotifiable
 
     public function routeNotificationForMobilyWs()
     {
-        return 'mobile_number';
+        return $this->mobile_number;
     }
 }
 

@@ -39,11 +39,11 @@ class MobilyWsChannel
      */
     public function send($notifiable, Notification $notification)
     {
-        $number = $notifiable->routeNotificationFor('MobilyWs') ?: 'phone_number';
+        $number = $notifiable->routeNotificationFor('MobilyWs') ?: $notifiable->phone_number;
 
         $response = $this->api->send([
             'msg' => $notification->toMobilyWs($notifiable),
-            'numbers' => $notifiable->{$number},
+            'numbers' => $number,
         ]);
 
         if ($response['code'] == 1) {
