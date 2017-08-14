@@ -19,7 +19,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function it_return_the_correct_config_value()
     {
-        $configArray = include __DIR__.'/../config/mobilyws.php';
+        $configArray = $this->getConfigs();
         $config = array_merge($configArray, [
             'lang' => '4',
         ]);
@@ -42,7 +42,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function it_return_the_request_options()
     {
-        $configArray = include __DIR__.'/../config/mobilyws.php';
+        $configArray = $this->getConfigs();
         $mobilyWsConfig = new MobilyWsConfig($configArray);
         $requestOptions = [
                 'http_errors' => true,
@@ -50,5 +50,27 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertEquals($requestOptions, $mobilyWsConfig->request);
+    }
+    private function getConfigs(array $overrides = [])
+    {
+        return array_merge(
+            [
+                'mobile'          => '96650000',
+                'password'        => '123',
+                'sender'          => 'sender',
+                'applicationType' => 68,
+                'lang'            => '3',
+                'guzzle'          => [
+                    'client'  => [
+                        'base_uri' => 'http://mobily.ws/api/',
+                    ],
+                    'request' => [
+                        'http_errors' => true,
+                        'debug'       => false,
+                    ],
+                ],
+            ],
+            $overrides
+        );
     }
 }
