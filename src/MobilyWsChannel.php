@@ -2,6 +2,8 @@
 
 namespace NotificationChannels\MobilyWs;
 
+use Illuminate\Events\Dispatcher;
+use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 
@@ -10,14 +12,19 @@ class MobilyWsChannel
     /** @var MobilyWsApi */
     private $api;
 
+    /** @var Dispatcher */
+    private $events;
+
     /**
      * MobilyWsChannel constructor.
      *
-     * @param MobilyWsApi $mobilyWs
+     * @param MobilyWsApi                   $mobilyWs
+     * @param \Illuminate\Events\Dispatcher $events
      */
-    public function __construct(MobilyWsApi $mobilyWs)
+    public function __construct(MobilyWsApi $mobilyWs, Dispatcher $events)
     {
         $this->api = $mobilyWs;
+        $this->events = $events;
     }
 
     /**
@@ -38,10 +45,14 @@ class MobilyWsChannel
             'msg' => $notification->toMobilyWs($notifiable),
             'numbers' => $notifiable->{$number},
         ]);
-        
+
         if ($response['code'] == 1) {
             return $response['message'];
         }
-        throw CouldNotSendNotification::mobilyWsRespondedWithAnError($response['code'], $response['message']);
+        $this->events->fire(
+            new NotificationFailed($notifiable, $notification, 'mobily-ws', $response)
+        );
+
+//        throw CouldNotSendNotification::mobilyWsRespondedWithAnError($response['code'], $response['message']);
     }
 }

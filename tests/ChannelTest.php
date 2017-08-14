@@ -2,18 +2,21 @@
 
 namespace NotificationChannels\MobilyWs\Test;
 
+use Mockery;
+use Illuminate\Events\Dispatcher;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
-use Mockery;
-use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 use NotificationChannels\MobilyWs\MobilyWsApi;
 use NotificationChannels\MobilyWs\MobilyWsChannel;
+use Illuminate\Notifications\Events\NotificationFailed;
+use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 
 /**
  * @property \Mockery\MockInterface                               api
  * @property \NotificationChannels\MobilyWs\Test\TestNotification notification
  * @property \NotificationChannels\MobilyWs\MobilyWsChannel       channel
  * @property \NotificationChannels\MobilyWs\Test\TestNotifiable   notifiable
+ * @property \Mockery\MockInterface                               events
  */
 class ChannelTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,10 +25,12 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
         parent::setUp();
         $this->api = Mockery::mock(MobilyWsApi::class);
 
-        $this->channel = new MobilyWsChannel($this->api);
+        $this->events = Mockery::mock(Dispatcher::class);
 
+        $this->channel = new MobilyWsChannel($this->api, $this->events);
+        
         $this->notification = new TestNotification();
-
+        
         $this->notifiable = new TestNotifiable();
     }
 
@@ -52,12 +57,14 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function it_throw_an_exception_when_mobily_ws_return_an_error()
     {
+        $this->markTestSkipped('Confirm removing mobilyWsRespondedWithAnError exception');
         $params = [
             'msg' => 'Text message',
             'numbers' => '966550000000',
         ];
         $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 3, 'message' => 'رصيدك غير كافي لإتمام عملية الإرسال']);
-        
+        $this->events->shouldReceive('fire')->with(Mockery::type(NotificationFailed::class));
+    
         try {
             $this->channel->send($this->notifiable, $this->notification);
         } catch (CouldNotSendNotification $e) {
@@ -66,6 +73,19 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
         }
         
         $this->fail('CouldNotSendNotification exception was not raised');
+    }
+    
+    /** @test */
+    public function it_fires_failure_event_on_failure()
+    {
+        $params = [
+            'msg' => 'Text message',
+            'numbers' => '966550000000',
+        ];
+        $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 5, 'message' => 'كلمة المرور الخاصة بالحساب غير صحيحة']);
+        $this->events->shouldReceive('fire')->with(Mockery::type(NotificationFailed::class));
+        
+        $this->channel->send($this->notifiable, $this->notification);
     }
     
 }
