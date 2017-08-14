@@ -31,7 +31,7 @@ class ServiceProviderTest extends MockeryTestCase
         $this->app->shouldReceive('offsetGet')
             ->with('config')
             ->andReturn([
-                'services.mobilyws' => $configArray,
+                'mobilyws' => $configArray,
             ]);
 
         $mobilyWsApi = Mockery::mock(MobilyWsApi::class);
