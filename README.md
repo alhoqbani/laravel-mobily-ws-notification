@@ -141,7 +141,9 @@ $user->notify(new SmsNewUser());
 
 ## TODO
 - [ ] Validate mobile numbers
-- [ ] Validate text messages' type and length
+- [ ] Validate text messages type and length
+- [ ] Add the option to send Scheduled SMS
+- [ ] Add the the reset of params (MsgID, msgKey, deleteKey, timeSend, dateSend)
 
 ## Changelog
 
