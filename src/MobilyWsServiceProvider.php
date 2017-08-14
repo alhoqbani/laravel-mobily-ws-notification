@@ -15,7 +15,7 @@ class MobilyWsServiceProvider extends ServiceProvider
         $this->app->when(MobilyWsChannel::class)
             ->needs(MobilyWsApi::class)
             ->give(function () {
-                $mobilyWsConfig = config('mobilyws');
+                $mobilyWsConfig = $this->app['config']['services.mobilyws'];
 
                 return new MobilyWsApi(
                     new MobilyWsConfig($mobilyWsConfig),
@@ -24,6 +24,11 @@ class MobilyWsServiceProvider extends ServiceProvider
                     )
                 );
             });
+    
+        $this->publishes([
+            __DIR__. '/../config/mobilyws.php' => config_path('mobilyws.php'),
+        ]);
+    
     }
 
     /**
