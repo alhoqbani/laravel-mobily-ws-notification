@@ -8,6 +8,23 @@ use GuzzleHttp\Exception\RequestException;
 class CouldNotSendNotification extends \Exception
 {
     /**
+     * Thrown when mobily.ws return a response body other than '1'.
+     *
+     * @param $code
+     * @param $message
+     *
+     * @return static
+     */
+    public static function mobilyWsRespondedWithAnError($code, $message)
+    {
+        return new static(
+            sprintf("Mobily.ws responded with error number %s and message:\n%s",
+                $code,
+                $message
+            ));
+    }
+    
+    /**
      * Thrown when GuzzleHttp throw a request exception.
      *
      * @param RequestException $exception

@@ -5,6 +5,7 @@ namespace NotificationChannels\MobilyWs;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Events\NotificationFailed;
+use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 
 class MobilyWsChannel
 {
@@ -51,5 +52,7 @@ class MobilyWsChannel
         $this->events->fire(
             new NotificationFailed($notifiable, $notification, 'mobily-ws', $response)
         );
+    
+        throw CouldNotSendNotification::mobilyWsRespondedWithAnError($response['code'], $response['message']);
     }
 }
