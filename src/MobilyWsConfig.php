@@ -15,17 +15,17 @@ class MobilyWsConfig
     {
         $this->config = $config;
     }
-    
+
     public function __get($name)
     {
         if ($name == 'request') {
             return $this->config['guzzle']['request'];
         }
-        
+
         if (isset($this->config[$name])) {
             return $this->config[$name];
         }
+
+        return null;
     }
-    
-    
 }
