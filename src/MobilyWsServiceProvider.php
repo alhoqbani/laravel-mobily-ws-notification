@@ -24,17 +24,9 @@ class MobilyWsServiceProvider extends ServiceProvider
                     )
                 );
             });
-    
-        $this->publishes([
-            __DIR__. '/../config/mobilyws.php' => config_path('mobilyws.php'),
-        ]);
-    
-    }
 
-    /**
-     * Register the application services.
-     */
-    public function register()
-    {
+        $this->publishes([
+            __DIR__.'/../config/mobilyws.php' => config_path('mobilyws.php'),
+        ]);
     }
 }
