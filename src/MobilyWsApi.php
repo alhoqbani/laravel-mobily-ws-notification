@@ -71,7 +71,7 @@ class MobilyWsApi
             'msg' => $params['msg'],
             'numbers' => $params['numbers'],
             // For development to avoid charges
-            'dateSend' => \Carbon\Carbon::parse('+1 month')->format('m/d/Y'),
+//            'dateSend' => \Carbon\Carbon::parse('+1 month')->format('m/d/Y'),
         ];
 
         return array_merge(
