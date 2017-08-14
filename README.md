@@ -54,6 +54,7 @@ You must have an account with [MobilyWs](https://www.mobily.ws)  to be able to u
 ```php
 MOBILY_WS_MOBILE=
 MOBILY_WS_PASSWORD=
+// Name/Number of Sender must be approved by mobily.ws for GCC
 MOBILY_WS_SENDER=
 ```
 
@@ -85,6 +86,12 @@ class SmsNewUser extends Notification
         return [MobilyWsChannel::class];
     }
     
+    /**
+     * Get the text message of the SMS.
+     *
+     * @param  mixed  $notifiable
+     * @return string 
+     */
     public function toMobilyWs($notifiable)
     {
         return "Dear $notifiable->name , Thank for your business with us";
