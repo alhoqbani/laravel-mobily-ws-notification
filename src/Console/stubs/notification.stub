@@ -1,0 +1,49 @@
+<?php
+
+namespace DummyNamespace;
+
+use Carbon\Carbon;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
+use NotificationChannels\MobilyWs\MobilyWsChannel;
+use NotificationChannels\MobilyWs\MobilyWsMessage;
+
+class DummyClass extends Notification
+{
+    use Queueable;
+
+    /**
+     * Create a new notification instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    public function via($notifiable)
+    {
+        return [MobilyWsChannel::class];
+    }
+
+    /**
+     * Get the text message representation of the notification
+     *
+     * @param  mixed      $notifiable
+     * @param \NotificationChannels\MobilyWs\MobilyWsMessage $msg
+     *
+     * @return \NotificationChannels\MobilyWs\MobilyWsMessage|string
+     */
+    public function toMobilyWs($notifiable, MobilyWsMessage $msg)
+    {
+        return $msg->text('some text')
+            ->time(Carbon::parse("+1 day"));
+    }
+}

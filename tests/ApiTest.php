@@ -2,6 +2,7 @@
 
 namespace NotificationChannels\MobilyWs\Test;
 
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\HandlerStack;
@@ -12,6 +13,7 @@ use function GuzzleHttp\Psr7\parse_query;
 use NotificationChannels\MobilyWs\MobilyWsApi;
 use NotificationChannels\MobilyWs\MobilyWsConfig;
 use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
+use NotificationChannels\MobilyWs\MobilyWsMessage;
 
 class ApiTest extends \PHPUnit_Framework_TestCase
 {
@@ -49,7 +51,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function it_send_request_with_correct_params()
+    public function it_send_request_with_correct_params_when_given_string_message()
     {
         $container = [];
         $history = Middleware::history($container);
@@ -72,7 +74,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
             'numbers'         => '966550000000',
         ];
 
-        $api->send($params);
+        $api->sendString($params);
 
         /** @var Request $request */
         $request = $container[0]['request'];
@@ -80,6 +82,79 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $container);
         $this->assertSame('POST', $request->getMethod());
         $this->assertSame('/api/msgSend.php', $request->getRequestTarget());
+        $this->assertArraySubset($params, parse_query($request->getBody()->getContents()));
+    }
+    
+    /** @test */
+    public function it_send_request_with_correct_params_when_given_MobilyWsMessage_instance()
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $mock = new MockHandler([
+            new Response(200, [], 1),
+        ]);
+        $stack = HandlerStack::create($mock);
+        $stack->push($history);
+        $options = [
+            'base_uri' => 'http://mobily.ws/api/',
+            'handler' => $stack,
+        ];
+        $client = new Client($options);
+        $mobileWsConfig = new MobilyWsConfig($this->getConfigs());
+        $api = new MobilyWsApi($mobileWsConfig, $client);
+        
+        $message = new MobilyWsMessage('SMS Text Message');
+        $params = [
+            'applicationType' => '68',
+            'lang'            => '3',
+            'msg'             => $message->text,
+            'numbers'         => $number = '966550000000',
+        ];
+
+        $api->sendMessage($message, $number);
+
+        /** @var Request $request */
+        $request = $container[0]['request'];
+
+        $this->assertCount(1, $container);
+        $this->assertSame('POST', $request->getMethod());
+        $this->assertSame('/api/msgSend.php', $request->getRequestTarget());
+        $this->assertArraySubset($params, parse_query($request->getBody()->getContents()));
+    }
+    
+    
+    /** @test */
+    public function it_send_date_and_time_with_request_when_message_time_is_set()
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $mock = new MockHandler([
+            new Response(200, [], 1),
+        ]);
+        $stack = HandlerStack::create($mock);
+        $stack->push($history);
+        $options = [
+            'base_uri' => 'http://mobily.ws/api/',
+            'handler' => $stack,
+        ];
+        $client = new Client($options);
+        $mobileWsConfig = new MobilyWsConfig($this->getConfigs());
+        $api = new MobilyWsApi($mobileWsConfig, $client);
+        
+        $message = new MobilyWsMessage('SMS Text Message');
+        $message->time(Carbon::parse("+1 week"));
+        $params = [
+            'msg'             => $message->text,
+            'numbers'         => $number = '966550000000',
+            'timeSend'         => $message->timeSend(),
+            'dateSend'         => $message->dateSend(),
+        ];
+
+        $api->sendMessage($message, $number);
+
+        /** @var Request $request */
+        $request = $container[0]['request'];
+        
         $this->assertArraySubset($params, parse_query($request->getBody()->getContents()));
     }
 

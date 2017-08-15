@@ -25,19 +25,56 @@ class MobilyWsApi
         $this->http = $http;
         $this->config = $config;
     }
-
+    
     /**
-     * @param array $params
+     * Send request with string message
+     *
+     * @param $params
      *
      * @return array
-     *
-     * @throws CouldNotSendNotification
      */
-    public function send(array $params)
+    public function sendString($params)
+    {
+        $payload = $this->preparePayload($params);
+        return $this->send($payload);
+    }
+    
+    /**
+     * Send request with MobilyWsMessage instance
+     *
+     * @param MobilyWsMessage $message
+     *
+     * @param                 $number
+     *
+     * @return array
+     * @internal param $params
+     */
+    public function sendMessage(MobilyWsMessage $message, $number)
+    {
+        $params = [
+            'msg' => $message->text,
+            'numbers' => $number,
+            'dateSend' => $message->dateSend(),
+            'timeSend' => $message->timeSend(),
+        ];
+        
+        $payload = $this->preparePayload($params);
+        return $this->send($payload);
+    }
+    
+    /**
+     * Send request to mobily.ws
+     *
+     * @param array $payload
+     *
+     * @return array
+     * @throws \NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification
+     * @internal param array $params
+     *
+     */
+    public function send(array $payload)
     {
         $endpoint = 'msgSend.php';
-        $payload = $this->preparePayload($params);
-
         try {
             $response = $this->http->post($endpoint, $payload);
 
@@ -62,17 +99,13 @@ class MobilyWsApi
      */
     protected function preparePayload($params)
     {
-        $form = [
+        $form = array_merge([
             'mobile' => $this->config->mobile,
             'password' => $this->config->password,
             'applicationType' => $this->config->applicationType,
             'lang' => $this->config->lang,
             'sender' => $this->config->sender,
-            'msg' => $params['msg'],
-            'numbers' => $params['numbers'],
-            // For development to avoid charges
-//            'dateSend' => \Carbon\Carbon::parse('+1 month')->format('m/d/Y'),
-        ];
+        ], $params);
 
         return array_merge(
             ['form_params' => $form],
