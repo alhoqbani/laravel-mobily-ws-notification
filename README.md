@@ -19,6 +19,7 @@ This package makes it easy to send notifications using [MobilyWs](https://www.mo
 	- [Create Notification](#create-notification)
 	- [Routing SMS Notifications](#routing-sms-notifications)
 	- [Sending SMS](#sending-sms)
+	- [Scheduled SMS](#scheduled-sms)
 	- [Available Message methods](#available-message-methods)
 - [TODO](#todo)
 - [Changelog](#changelog)
@@ -149,6 +150,24 @@ use App\Notifications\SmsNewUser;
 
 $user->notify(new SmsNewUser());
 ```
+
+### Scheduled SMS
+[MobilyWs](https://www.mobily.ws) api allows for sending scheduled message which will be sent on the defined date/time.
+
+> Please note that if you define time in the past, the message will be sent immediately by mobily.ws. 
+This library will not check if the defined time is in the future.
+
+You can define the time on which the message should be sent by mobily.ws by calling `time` method on the MobilyWsMessage instance.
+```php
+    public function toMobilyWs($notifiable)
+    {
+        return (new MobilyWsMessage)
+            ->text("Message text")
+            ->time(Carbon::parse("+1 week);
+    }
+```
+The time method accepts either a DateTime object or a timestamp.
+
 ### Available Message methods
 In your notification, you must define a method `toMobilyWs` which will receive the notifiable entity (e.g User model) and an instance of `MobilyWsMessage`. 
 
@@ -179,16 +198,19 @@ or set the text message using the `msg()` method:
 ```
 Method `toMobilyWs` will receive an instance of `MobilyWsMessage` as the 2nd argument.
 #### list of available methods :
-> Coming soon.
+`text()` To add the content of the text message
+'time()' To set time of the scheduled sms.
 
 ## TODO
 - [ ] Validate mobile numbers
 - [ ] Validate text messages type and length
-- [ ] Verify method `toMobilyWs` existence and config file.
-- [ ] Add the option to send Scheduled SMS
-- [ ] Add the the reset of params (MsgID, msgKey, deleteKey, timeSend, dateSend)
+- [ ] Validate given time is in the future.
+- [x] Verify method `toMobilyWs` existence and config file.
+- [x] Add the option to send Scheduled SMS
+- [ ] Add the the rest of params (MsgID, msgKey, deleteKey, ~~timeSend~~, ~~dateSend~~)
 - [ ] Translate mobily.ws error messages
 - [ ] Create artisan command to made mobily.ws notifications
+- [ ] Add list of fired event to the documentation.
 
 ## Changelog
 
