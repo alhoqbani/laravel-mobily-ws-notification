@@ -29,8 +29,6 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
 
         $this->channel = new MobilyWsChannel($this->api, $this->events);
 
-        $this->notification = new TestNotification();
-
         $this->notifiable = new TestNotifiable();
     }
 
@@ -44,33 +42,33 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function it_can_send_a_notification_with_text()
     {
+        $notificationWithText = new TestNotification('Text message as a string');
         $params = [
-          'msg' => 'Text message',
+          'msg' => 'Text message as a string',
           'numbers' => '966550000000',
         ];
 
         $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 1, 'message' => 'تمت عملية الإرسال بنجاح']);
 
-        $response = $this->channel->send($this->notifiable, $this->notification);
+        $response = $this->channel->send($this->notifiable, $notificationWithText);
         $this->assertEquals('تمت عملية الإرسال بنجاح', $response);
     }
-    
-      /** @test */
+
+    /** @test */
     public function it_can_send_a_notification_with_instance_of_MobilyWsMessage()
     {
-        $notification = new TestNotificationWithMessageInstance($message = "text message content");
+        $messageInstance = new MobilyWsMessage('Text from message instance');
+        $notificationWithMessageInstance = new TestNotification($messageInstance);
         $params = [
-          'msg' => $notification->toMobilyWs($this->notifiable),
+          'msg' => $messageInstance,
           'numbers' => '966550000000',
         ];
 
         $this->api->shouldReceive('sendMessage')->with($params)->andReturn(['code' => 1, 'message' => 'تمت عملية الإرسال بنجاح']);
 
-        $response = $this->channel->send($this->notifiable, $notification);
+        $response = $this->channel->send($this->notifiable, $notificationWithMessageInstance);
         $this->assertEquals('تمت عملية الإرسال بنجاح', $response);
     }
-    
-    
 
     /** @test
      * @expectedException \NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
@@ -84,7 +82,7 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
         $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 5, 'message' => 'كلمة المرور الخاصة بالحساب غير صحيحة']);
 
         try {
-            $this->channel->send($this->notifiable, $this->notification);
+            $this->channel->send($this->notifiable, new TestNotification("Text message"));
         } catch (CouldNotSendNotification $e) {
             $this->events->shouldHaveReceived('fire');
         }
@@ -100,7 +98,7 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
         $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 3, 'message' => 'رصيدك غير كافي لإتمام عملية الإرسال']);
 
         try {
-            $this->channel->send($this->notifiable, $this->notification);
+            $this->channel->send($this->notifiable, new TestNotification("Text message"));
         } catch (CouldNotSendNotification $e) {
             $this->assertContains('رصيدك غير كافي لإتمام عملية الإرسال', $e->getMessage());
 
@@ -139,16 +137,8 @@ class TestNotifiable
 
 class TestNotification extends Notification
 {
-    public function toMobilyWs($notifiable)
-    {
-        return 'Text message';
-    }
-}
-
-class TestNotificationWithMessageInstance extends Notification
-{
     public $message;
-    
+
     /**
      * TestNotificationWithMessageInstance constructor.
      *
@@ -158,9 +148,9 @@ class TestNotificationWithMessageInstance extends Notification
     {
         $this->message = $message;
     }
-    
+
     public function toMobilyWs($notifiable)
     {
-        return new mobilyWsMessage($this->message);
+        return $this->message;
     }
 }
