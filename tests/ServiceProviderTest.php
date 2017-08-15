@@ -12,7 +12,7 @@ class ServiceProviderTest extends MockeryTestCase
     /** @var MobilyWsServiceProvider */
     protected $provider;
 
-    /** @var App */
+    /** @var \Mockery\MockInterface */
     protected $app;
 
     public function setUp()
@@ -45,6 +45,24 @@ class ServiceProviderTest extends MockeryTestCase
         $this->app->shouldReceive('give')->with(Mockery::on(function ($mobilyWsApi) {
             return $mobilyWsApi() instanceof MobilyWsApi;
         }))->once();
+
+        $this->provider->boot();
+    }
+    
+    /** @test
+     * @expectedException \NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification
+     */
+    public function it_throw_an_exception_when_there_is_no_config_file()
+    {
+        $this->app->shouldReceive('offsetGet')
+            ->with('config')
+            ->andReturnNull();
+        
+        $this->app->shouldReceive('when')->with(MobilyWsChannel::class)->once()->andReturn($this->app);
+        $this->app->shouldReceive('needs')->with(MobilyWsApi::class)->once()->andReturn($this->app);
+        $this->app->shouldReceive('give')->with(Mockery::on(function ($mobilyWsApi) {
+            return $mobilyWsApi() instanceof MobilyWsApi;
+        }));
 
         $this->provider->boot();
     }

@@ -41,7 +41,7 @@ class CouldNotSendNotification extends \Exception
     }
 
     /**
-     * Thrown when any other errors occur.
+     * Thrown when any other errors received.
      *
      * @param Response $response
      *
@@ -55,5 +55,18 @@ class CouldNotSendNotification extends \Exception
         return new static(
             sprintf('Could not send sms notification to mobily.ws. Status code %s and message: %s', $code, $message)
         );
+    }
+    
+    /**
+     * Thrown when any other errors occur.
+     *
+     * @param $message
+     *
+     * @return static
+     *
+     */
+    public static function withErrorMessage($message)
+    {
+        return new static($message);
     }
 }
