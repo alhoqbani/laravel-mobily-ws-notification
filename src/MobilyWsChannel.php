@@ -55,7 +55,7 @@ class MobilyWsChannel
                 'numbers' => $number,
             ]);
         } else {
-            $errorMessage = sprintf("toMobilyWs must return a string or instance of %s. Instance of %s returned %s",
+            $errorMessage = sprintf("toMobilyWs must return a string or instance of %s. Instance of %s returned",
                 MobilyWsMessage::class,
                     gettype($message)
                 );

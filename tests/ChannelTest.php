@@ -70,6 +70,29 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('تمت عملية الإرسال بنجاح', $response);
     }
 
+    /** @test */
+    public function it_throw_an_exception_when_given_a_message_other_than_string_or_message_instance()
+    {
+        $notificationWithArray = new TestNotification($array = ['text message from array']);
+        $params = [
+            'msg' => $array,
+            'numbers' => '966550000000',
+        ];
+
+        try {
+            $this->channel->send($this->notifiable, $notificationWithArray);
+        } catch (CouldNotSendNotification $e) {
+            $this->assertContains(
+                'toMobilyWs must return a string or instance of NotificationChannels\MobilyWs\MobilyWsMessage. Instance of array returned',
+                $e->getMessage()
+            );
+
+            return;
+        }
+
+        $this->fail('CouldNotSendNotification exception was not raised');
+    }
+
     /** @test
      * @expectedException \NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
      */
@@ -82,7 +105,7 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
         $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 5, 'message' => 'كلمة المرور الخاصة بالحساب غير صحيحة']);
 
         try {
-            $this->channel->send($this->notifiable, new TestNotification("Text message"));
+            $this->channel->send($this->notifiable, new TestNotification('Text message'));
         } catch (CouldNotSendNotification $e) {
             $this->events->shouldHaveReceived('fire');
         }
@@ -98,7 +121,7 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
         $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 3, 'message' => 'رصيدك غير كافي لإتمام عملية الإرسال']);
 
         try {
-            $this->channel->send($this->notifiable, new TestNotification("Text message"));
+            $this->channel->send($this->notifiable, new TestNotification('Text message'));
         } catch (CouldNotSendNotification $e) {
             $this->assertContains('رصيدك غير كافي لإتمام عملية الإرسال', $e->getMessage());
 
