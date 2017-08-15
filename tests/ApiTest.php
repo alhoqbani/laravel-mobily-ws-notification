@@ -49,7 +49,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function it_send_request_with_correct_params()
+    public function it_send_request_with_correct_params_when_given_string_message()
     {
         $container = [];
         $history = Middleware::history($container);
@@ -72,7 +72,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
             'numbers'         => '966550000000',
         ];
 
-        $api->send($params);
+        $api->sendString($params);
 
         /** @var Request $request */
         $request = $container[0]['request'];

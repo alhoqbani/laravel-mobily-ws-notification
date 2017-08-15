@@ -25,19 +25,33 @@ class MobilyWsApi
         $this->http = $http;
         $this->config = $config;
     }
-
+    
     /**
-     * @param array $params
+     * Send request with string message
+     *
+     * @param $params
      *
      * @return array
-     *
-     * @throws CouldNotSendNotification
      */
-    public function send(array $params)
+    public function sendString($params)
+    {
+        $payload = $this->preparePayload($params);
+        return $this->send($payload);
+    }
+    
+    /**
+     * Send request to mobily.ws
+     *
+     * @param array $payload
+     *
+     * @return array
+     * @throws \NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification
+     * @internal param array $params
+     *
+     */
+    public function send(array $payload)
     {
         $endpoint = 'msgSend.php';
-        $payload = $this->preparePayload($params);
-
         try {
             $response = $this->http->post($endpoint, $payload);
 

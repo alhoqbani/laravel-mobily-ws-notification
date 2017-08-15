@@ -69,7 +69,7 @@ class MobilyWsChannel
     private function dispatchRequest($message, $number)
     {
         if (is_string($message)) {
-            $response = $this->api->send([
+            $response = $this->api->sendString([
                 'msg' => $message,
                 'numbers' => $number,
             ]);

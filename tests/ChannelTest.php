@@ -40,7 +40,7 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function it_can_send_a_notification_with_text()
+    public function it_can_send_a_notification_with_string_text()
     {
         $notificationWithText = new TestNotification('Text message as a string');
         $params = [
@@ -48,7 +48,7 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
           'numbers' => '966550000000',
         ];
 
-        $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 1, 'message' => 'تمت عملية الإرسال بنجاح']);
+        $this->api->shouldReceive('sendString')->with($params)->andReturn(['code' => 1, 'message' => 'تمت عملية الإرسال بنجاح']);
 
         $response = $this->channel->send($this->notifiable, $notificationWithText);
         $this->assertEquals('تمت عملية الإرسال بنجاح', $response);
@@ -102,7 +102,7 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
             'msg' => 'Text message',
             'numbers' => '966550000000',
         ];
-        $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 5, 'message' => 'كلمة المرور الخاصة بالحساب غير صحيحة']);
+        $this->api->shouldReceive('sendString')->with($params)->andReturn(['code' => 5, 'message' => 'كلمة المرور الخاصة بالحساب غير صحيحة']);
 
         try {
             $this->channel->send($this->notifiable, new TestNotification('Text message'));
@@ -118,7 +118,7 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
             'msg' => 'Text message',
             'numbers' => '966550000000',
         ];
-        $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 3, 'message' => 'رصيدك غير كافي لإتمام عملية الإرسال']);
+        $this->api->shouldReceive('sendString')->with($params)->andReturn(['code' => 3, 'message' => 'رصيدك غير كافي لإتمام عملية الإرسال']);
 
         try {
             $this->channel->send($this->notifiable, new TestNotification('Text message'));
