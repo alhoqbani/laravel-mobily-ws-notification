@@ -39,12 +39,36 @@ class MobilyWsChannel
      */
     public function send($notifiable, Notification $notification)
     {
-        if (! method_exists($notification, 'toMobilyWs')) {
+        if (!method_exists($notification, 'toMobilyWs')) {
             throw CouldNotSendNotification::withErrorMessage('MobilyWs notifications must have toMobilyWs method');
         }
+        $message = $notification->toMobilyWs($notifiable);
         $number = $notifiable->routeNotificationFor('MobilyWs') ?: $notifiable->phone_number;
-        
-        if (is_string($message = $notification->toMobilyWs($notifiable))) {
+        // TODO Validate Number
+
+        $response = $this->dispatchRequest($message, $number);
+
+        if ($response['code'] == 1) {
+            return $response['message'];
+        }
+        $this->events->fire(
+            new NotificationFailed($notifiable, $notification, 'mobily-ws', $response)
+        );
+
+        throw CouldNotSendNotification::mobilyWsRespondedWithAnError($response['code'], $response['message']);
+    }
+
+    /**
+     * @param $message
+     * @param $number
+     *
+     * @return array
+     *
+     * @throws CouldNotSendNotification
+     */
+    private function dispatchRequest($message, $number)
+    {
+        if (is_string($message)) {
             $response = $this->api->send([
                 'msg' => $message,
                 'numbers' => $number,
@@ -55,20 +79,13 @@ class MobilyWsChannel
                 'numbers' => $number,
             ]);
         } else {
-            $errorMessage = sprintf("toMobilyWs must return a string or instance of %s. Instance of %s returned",
+            $errorMessage = sprintf('toMobilyWs must return a string or instance of %s. Instance of %s returned',
                 MobilyWsMessage::class,
-                    gettype($message)
-                );
+                gettype($message)
+            );
             throw CouldNotSendNotification::withErrorMessage($errorMessage);
         }
 
-        if ($response['code'] == 1) {
-            return $response['message'];
-        }
-        $this->events->fire(
-            new NotificationFailed($notifiable, $notification, 'mobily-ws', $response)
-        );
-
-        throw CouldNotSendNotification::mobilyWsRespondedWithAnError($response['code'], $response['message']);
+        return $response;
     }
 }
