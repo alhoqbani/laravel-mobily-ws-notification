@@ -142,6 +142,19 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
 
         $this->fail('CouldNotSendNotification exception was not raised');
     }
+    
+    /** @test */
+    public function it_passes_an_instance_of_MobilyWsMessage_when_calling_toMobilyWs_method()
+    {
+        $notification = Mockery::mock(TestNotification::class);
+
+        $notification->shouldReceive('toMobilyWs')
+            ->with($this->notifiable, Mockery::type(MobilyWsMessage::class))
+            ->andReturn(new MobilyWsMessage());
+        $this->api->shouldReceive('sendMessage')->andReturn(['code' => 1, 'message' => 'ok']);
+        
+        $this->channel->send($this->notifiable, $notification);
+    }
 }
 
 class TestNotifiable

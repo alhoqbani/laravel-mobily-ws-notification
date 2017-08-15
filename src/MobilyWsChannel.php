@@ -42,7 +42,7 @@ class MobilyWsChannel
         if (!method_exists($notification, 'toMobilyWs')) {
             throw CouldNotSendNotification::withErrorMessage('MobilyWs notifications must have toMobilyWs method');
         }
-        $message = $notification->toMobilyWs($notifiable);
+        $message = $notification->toMobilyWs($notifiable, new MobilyWsMessage());
         $number = $notifiable->routeNotificationFor('MobilyWs') ?: $notifiable->phone_number;
         // TODO Validate Number
 
