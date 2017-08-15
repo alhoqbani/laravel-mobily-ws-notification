@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notification;
 use NotificationChannels\MobilyWs\MobilyWsApi;
 use NotificationChannels\MobilyWs\MobilyWsChannel;
 use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
+use NotificationChannels\MobilyWs\MobilyWsMessage;
 
 /**
  * @property \Mockery\MockInterface                               api
@@ -41,7 +42,7 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function it_can_send_a_notification()
+    public function it_can_send_a_notification_with_text()
     {
         $params = [
           'msg' => 'Text message',
@@ -53,6 +54,23 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
         $response = $this->channel->send($this->notifiable, $this->notification);
         $this->assertEquals('تمت عملية الإرسال بنجاح', $response);
     }
+    
+      /** @test */
+    public function it_can_send_a_notification_with_instance_of_MobilyWsMessage()
+    {
+        $notification = new TestNotificationWithMessageInstance($message = "text message content");
+        $params = [
+          'msg' => $notification->toMobilyWs($this->notifiable),
+          'numbers' => '966550000000',
+        ];
+
+        $this->api->shouldReceive('sendMessage')->with($params)->andReturn(['code' => 1, 'message' => 'تمت عملية الإرسال بنجاح']);
+
+        $response = $this->channel->send($this->notifiable, $notification);
+        $this->assertEquals('تمت عملية الإرسال بنجاح', $response);
+    }
+    
+    
 
     /** @test
      * @expectedException \NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
@@ -124,5 +142,25 @@ class TestNotification extends Notification
     public function toMobilyWs($notifiable)
     {
         return 'Text message';
+    }
+}
+
+class TestNotificationWithMessageInstance extends Notification
+{
+    public $message;
+    
+    /**
+     * TestNotificationWithMessageInstance constructor.
+     *
+     * @param $message
+     */
+    public function __construct($message)
+    {
+        $this->message = $message;
+    }
+    
+    public function toMobilyWs($notifiable)
+    {
+        return new mobilyWsMessage($this->message);
     }
 }

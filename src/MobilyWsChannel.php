@@ -3,8 +3,8 @@
 namespace NotificationChannels\MobilyWs;
 
 use Illuminate\Events\Dispatcher;
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Events\NotificationFailed;
+use Illuminate\Notifications\Notification;
 use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 
 class MobilyWsChannel
@@ -43,11 +43,24 @@ class MobilyWsChannel
             throw CouldNotSendNotification::withErrorMessage('MobilyWs notifications must have toMobilyWs method');
         }
         $number = $notifiable->routeNotificationFor('MobilyWs') ?: $notifiable->phone_number;
-
-        $response = $this->api->send([
-            'msg' => $notification->toMobilyWs($notifiable),
-            'numbers' => $number,
-        ]);
+        
+        if (is_string($message = $notification->toMobilyWs($notifiable))) {
+            $response = $this->api->send([
+                'msg' => $message,
+                'numbers' => $number,
+            ]);
+        } elseif ($message instanceof MobilyWsMessage) {
+            $response = $this->api->sendMessage([
+                'msg' => $message,
+                'numbers' => $number,
+            ]);
+        } else {
+            $errorMessage = sprintf("toMobilyWs must return a string or instance of %s. Instance of %s returned %s",
+                MobilyWsMessage::class,
+                    gettype($message)
+                );
+            throw CouldNotSendNotification::withErrorMessage($errorMessage);
+        }
 
         if ($response['code'] == 1) {
             return $response['message'];
