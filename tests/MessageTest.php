@@ -114,4 +114,13 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedTime, $message->timeSend());
     }
     
+    /** @test */
+    public function it_return_null_when_there_time_is_not_set()
+    {
+        $message = new MobilyWsMessage();
+        
+        $this->assertNull($message->dateSend());
+        $this->assertNull($message->timeSend());
+    }
+    
 }

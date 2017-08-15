@@ -52,7 +52,8 @@ class MobilyWsMessage
     }
 
     /**
-     * Set the message scheduled date and time
+     * Set the message scheduled date and time.
+     *
      * @param DateTime|Carbon|int $time
      *
      * @return $this
@@ -66,7 +67,6 @@ class MobilyWsMessage
         }
 
         if (is_numeric($time)) {
-
             $this->time = Carbon::createFromTimestamp($time);
 
             return $this;
@@ -76,23 +76,28 @@ class MobilyWsMessage
             sprintf('Time must be a timestamp or an object implementing DateTimeInterface. %s is given', gettype($time))
         );
     }
-    
+
     /**
-     * Get the message schedule date
+     * Get the message schedule date.
      *
      * @return string
      */
     public function dateSend()
     {
-        return $this->time->format("m/d/Y");
+        if ($this->time) {
+            return $this->time->format('m/d/Y');
+        }
     }
-    
+
     /**
-     * Get the message schedule time
+     * Get the message schedule time.
+     *
      * @return string
      */
     public function timeSend()
     {
-        return $this->time->format("H:i:s");
+        if ($this->time) {
+            return $this->time->format('H:i:s');
+        }
     }
 }
