@@ -92,6 +92,20 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
         $this->fail('CouldNotSendNotification exception was not raised');
     }
     
+    /** @test */
+    public function it_throw_an_exception_when_toMobilyWs_method_does_not_exist()
+    {
+        try {
+            $this->channel->send($this->notifiable, new Notification());
+        } catch (CouldNotSendNotification $e) {
+            $this->assertContains('MobilyWs notifications must have toMobilyWs method', $e->getMessage());
+            return;
+        }
+        
+        $this->fail('CouldNotSendNotification exception was not raised');
+    
+    }
+    
 }
 
 class TestNotifiable

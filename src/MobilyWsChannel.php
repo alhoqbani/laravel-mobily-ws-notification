@@ -3,8 +3,8 @@
 namespace NotificationChannels\MobilyWs;
 
 use Illuminate\Events\Dispatcher;
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Events\NotificationFailed;
+use Illuminate\Notifications\Notification;
 use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 
 class MobilyWsChannel
@@ -39,6 +39,9 @@ class MobilyWsChannel
      */
     public function send($notifiable, Notification $notification)
     {
+        if ( ! method_exists($notification, 'toMobilyWs')) {
+            throw CouldNotSendNotification::withErrorMessage('MobilyWs notifications must have toMobilyWs method');
+        }
         $number = $notifiable->routeNotificationFor('MobilyWs') ?: $notifiable->phone_number;
 
         $response = $this->api->send([
