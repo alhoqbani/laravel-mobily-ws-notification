@@ -23,7 +23,7 @@ class CouldNotSendNotification extends \Exception
                 $message
             ));
     }
-    
+
     /**
      * Thrown when GuzzleHttp throw a request exception.
      *
@@ -56,14 +56,13 @@ class CouldNotSendNotification extends \Exception
             sprintf('Could not send sms notification to mobily.ws. Status code %s and message: %s', $code, $message)
         );
     }
-    
+
     /**
      * Thrown when any other errors occur.
      *
      * @param $message
      *
      * @return static
-     *
      */
     public static function withErrorMessage($message)
     {
