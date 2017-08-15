@@ -1,7 +1,3 @@
-Here's the latest documentation on Laravel 5.4 Notifications System: 
-
-https://laravel.com/docs/master/notifications
-
 # Laravel Mobily.ws Notification Channel
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/alhoqbani/laravel-mobily-ws-notification.svg?style=flat-square)](https://packagist.org/packages/alhoqbani/laravel-mobily-ws-notification)
@@ -145,6 +141,8 @@ $user->notify(new SmsNewUser());
 - [ ] Verify method `toMobilyWs` existence and config file.
 - [ ] Add the option to send Scheduled SMS
 - [ ] Add the the reset of params (MsgID, msgKey, deleteKey, timeSend, dateSend)
+- [ ] Translate mobily.ws error messages
+- [ ] Create artisan command to made mobily.ws notifications
 
 ## Changelog
 
