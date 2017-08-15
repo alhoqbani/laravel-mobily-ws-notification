@@ -74,10 +74,7 @@ class MobilyWsChannel
                 'numbers' => $number,
             ]);
         } elseif ($message instanceof MobilyWsMessage) {
-            $response = $this->api->sendMessage([
-                'msg' => $message,
-                'numbers' => $number,
-            ]);
+            $response = $this->api->sendMessage($message, $number);
         } else {
             $errorMessage = sprintf('toMobilyWs must return a string or instance of %s. Instance of %s returned',
                 MobilyWsMessage::class,

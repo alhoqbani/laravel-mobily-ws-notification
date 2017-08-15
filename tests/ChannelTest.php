@@ -59,13 +59,11 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
     {
         $messageInstance = new MobilyWsMessage('Text from message instance');
         $notificationWithMessageInstance = new TestNotification($messageInstance);
-        $params = [
-          'msg' => $messageInstance,
-          'numbers' => '966550000000',
-        ];
 
-        $this->api->shouldReceive('sendMessage')->with($params)->andReturn(['code' => 1, 'message' => 'تمت عملية الإرسال بنجاح']);
-
+        $this->api->shouldReceive('sendMessage')
+            ->with($messageInstance, $this->notifiable->mobile_number)
+            ->andReturn(['code' => 1, 'message' => 'تمت عملية الإرسال بنجاح']);
+        
         $response = $this->channel->send($this->notifiable, $notificationWithMessageInstance);
         $this->assertEquals('تمت عملية الإرسال بنجاح', $response);
     }

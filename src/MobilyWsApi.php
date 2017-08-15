@@ -40,6 +40,27 @@ class MobilyWsApi
     }
     
     /**
+     * Send request with MobilyWsMessage instance
+     *
+     * @param MobilyWsMessage $message
+     *
+     * @param                 $number
+     *
+     * @return array
+     * @internal param $params
+     */
+    public function sendMessage(MobilyWsMessage $message, $number)
+    {
+        $params = [
+            'msg' => $message->msg,
+            'numbers' => $number,
+        ];
+        
+        $payload = $this->preparePayload($params);
+        return $this->send($payload);
+    }
+    
+    /**
      * Send request to mobily.ws
      *
      * @param array $payload
