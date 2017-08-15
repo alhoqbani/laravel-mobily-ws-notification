@@ -20,6 +20,7 @@ class MobilyWsServiceProvider extends ServiceProvider
                 if (is_null($mobilyWsConfig)) {
                     throw CouldNotSendNotification::withErrorMessage('Config file was not found. Please publish the config file');
                 }
+
                 return new MobilyWsApi(
                     new MobilyWsConfig($mobilyWsConfig),
                     new Client(

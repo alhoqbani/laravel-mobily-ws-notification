@@ -6,10 +6,9 @@ use Mockery;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
-use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 use NotificationChannels\MobilyWs\MobilyWsApi;
 use NotificationChannels\MobilyWs\MobilyWsChannel;
-use Illuminate\Notifications\Events\NotificationFailed;
+use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 
 /**
  * @property \Mockery\MockInterface                               api
@@ -54,7 +53,7 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
         $response = $this->channel->send($this->notifiable, $this->notification);
         $this->assertEquals('تمت عملية الإرسال بنجاح', $response);
     }
-    
+
     /** @test
      * @expectedException \NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
      */
@@ -66,13 +65,13 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
         ];
         $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 5, 'message' => 'كلمة المرور الخاصة بالحساب غير صحيحة']);
 
-        try{
+        try {
             $this->channel->send($this->notifiable, $this->notification);
         } catch (CouldNotSendNotification $e) {
             $this->events->shouldHaveReceived('fire');
         }
     }
-    
+
     /** @test */
     public function it_throw_an_exception_when_mobily_ws_return_an_error()
     {
@@ -81,17 +80,18 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
             'numbers' => '966550000000',
         ];
         $this->api->shouldReceive('send')->with($params)->andReturn(['code' => 3, 'message' => 'رصيدك غير كافي لإتمام عملية الإرسال']);
-        
+
         try {
             $this->channel->send($this->notifiable, $this->notification);
         } catch (CouldNotSendNotification $e) {
             $this->assertContains('رصيدك غير كافي لإتمام عملية الإرسال', $e->getMessage());
+
             return;
         }
-        
+
         $this->fail('CouldNotSendNotification exception was not raised');
     }
-    
+
     /** @test */
     public function it_throw_an_exception_when_toMobilyWs_method_does_not_exist()
     {
@@ -99,13 +99,12 @@ class ChannelTest extends \PHPUnit_Framework_TestCase
             $this->channel->send($this->notifiable, new Notification());
         } catch (CouldNotSendNotification $e) {
             $this->assertContains('MobilyWs notifications must have toMobilyWs method', $e->getMessage());
+
             return;
         }
-        
+
         $this->fail('CouldNotSendNotification exception was not raised');
-    
     }
-    
 }
 
 class TestNotifiable

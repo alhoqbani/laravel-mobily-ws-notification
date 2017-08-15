@@ -48,7 +48,7 @@ class ServiceProviderTest extends MockeryTestCase
 
         $this->provider->boot();
     }
-    
+
     /** @test
      * @expectedException \NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification
      */
@@ -57,7 +57,7 @@ class ServiceProviderTest extends MockeryTestCase
         $this->app->shouldReceive('offsetGet')
             ->with('config')
             ->andReturnNull();
-        
+
         $this->app->shouldReceive('when')->with(MobilyWsChannel::class)->once()->andReturn($this->app);
         $this->app->shouldReceive('needs')->with(MobilyWsApi::class)->once()->andReturn($this->app);
         $this->app->shouldReceive('give')->with(Mockery::on(function ($mobilyWsApi) {
