@@ -54,6 +54,8 @@ class MobilyWsApi
         $params = [
             'msg' => $message->text,
             'numbers' => $number,
+            'dateSend' => $message->dateSend(),
+            'timeSend' => $message->timeSend(),
         ];
         
         $payload = $this->preparePayload($params);
@@ -97,17 +99,13 @@ class MobilyWsApi
      */
     protected function preparePayload($params)
     {
-        $form = [
+        $form = array_merge([
             'mobile' => $this->config->mobile,
             'password' => $this->config->password,
             'applicationType' => $this->config->applicationType,
             'lang' => $this->config->lang,
             'sender' => $this->config->sender,
-            'msg' => $params['msg'],
-            'numbers' => $params['numbers'],
-            // For development to avoid charges
-            'dateSend' => \Carbon\Carbon::parse('+1 month')->format('m/d/Y'),
-        ];
+        ], $params);
 
         return array_merge(
             ['form_params' => $form],
