@@ -100,4 +100,18 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $this->fail('An exception should be thrown when invalid time format is given');
     }
     
+    /** @test */
+    public function it_return_date_and_time_in_a_proper_mobily_ws_required_format()
+    {
+        $expectedDate = "08/15/2017";
+        $expectedTime = "23:15:30";
+        $carbon = Carbon::parse('08/15/2017 23:15:30');
+        
+        $message = new MobilyWsMessage();
+        $message->time($carbon);
+        
+        $this->assertEquals($expectedDate, $message->dateSend());
+        $this->assertEquals($expectedTime, $message->timeSend());
+    }
+    
 }

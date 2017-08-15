@@ -52,6 +52,7 @@ class MobilyWsMessage
     }
 
     /**
+     * Set the message scheduled date and time
      * @param DateTime|Carbon|int $time
      *
      * @return $this
@@ -74,5 +75,24 @@ class MobilyWsMessage
         throw CouldNotSendNotification::withErrorMessage(
             sprintf('Time must be a timestamp or an object implementing DateTimeInterface. %s is given', gettype($time))
         );
+    }
+    
+    /**
+     * Get the message schedule date
+     *
+     * @return string
+     */
+    public function dateSend()
+    {
+        return $this->time->format("m/d/Y");
+    }
+    
+    /**
+     * Get the message schedule time
+     * @return string
+     */
+    public function timeSend()
+    {
+        return $this->time->format("H:i:s");
     }
 }
