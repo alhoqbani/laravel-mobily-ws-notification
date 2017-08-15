@@ -4,6 +4,7 @@ namespace NotificationChannels\MobilyWs;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
+use NotificationChannels\MobilyWs\Console\MobilyWsNotificationMakeCommand;
 use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 
 class MobilyWsServiceProvider extends ServiceProvider
@@ -33,4 +34,21 @@ class MobilyWsServiceProvider extends ServiceProvider
             __DIR__.'/../config/mobilyws.php' => config_path('mobilyws.php'),
         ]);
     }
+    
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->app->singleton(
+            'command.mobilyws.notification',
+            function ($app) {
+                return new MobilyWsNotificationMakeCommand($app['files']);
+            }
+        );
+        $this->commands('command.mobilyws.notification');
+    }
+    
 }

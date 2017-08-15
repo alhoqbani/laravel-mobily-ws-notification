@@ -68,9 +68,14 @@ MOBILY_WS_SENDER=
 ### Create new notification:
 Make a new notification class using laravel artisan
 ```bash
-php artisan make:notification SmsNewUser
+php artisan make:notification UserRegistered
 ``` 
-Configure the notification class to use MobilyWsChannel:
+and configure the notification class to use MobilyWsChannel.
+
+Or you could use our custom artisan command:
+```bash
+php artisan mobilyws:notification UserRegistered
+```
 
 The `toMobilyWs` method should return a string of the text message to be sent or an instance of `MobilyWsMessage`.
 
@@ -84,7 +89,7 @@ use Illuminate\Notifications\Notification;
 use NotificationChannels\MobilyWs\MobilyWsChannel;
 use NotificationChannels\MobilyWs\MobilyWsMessage;
 
-class SmsNewUser extends Notification
+class UserRegistered extends Notification
 {
     /**
      * Get the notification's delivery channels.
@@ -98,14 +103,16 @@ class SmsNewUser extends Notification
     }
     
     /**
-     * Get the text message of the SMS.
+     * Get the text message representation of the notification
      *
-     * @param  mixed  $notifiable
-     * @return string|MobilyWsMessage 
+     * @param  mixed      $notifiable
+     * @param \NotificationChannels\MobilyWs\MobilyWsMessage $msg
+     *
+     * @return \NotificationChannels\MobilyWs\MobilyWsMessage|string
      */
-    public function toMobilyWs($notifiable)
+    public function toMobilyWs($notifiable, MobilyWsMessage $msg)
     {
-        return "Dear $notifiable->name , Thank for your business with us";
+        return "Dear $notifiable->name, welcome to our website";
     }
 }
 ```
@@ -146,13 +153,15 @@ For example, `9665xxxxxxxx`
 
 ### Sending SMS:
 ```php
-use App\Notifications\SmsNewUser;
+use App\Notifications\UserRegistered;
 
-$user->notify(new SmsNewUser());
+$user = App\User::first();
+
+$user->notify(new UserRegistered());
 ```
 
 ### Scheduled SMS
-[MobilyWs](https://www.mobily.ws) api allows for sending scheduled message which will be sent on the defined date/time.
+[MobilyWs](https://www.mobily.ws) Api allows for sending scheduled message which will be sent on the defined date/time.
 
 > Please note that if you define time in the past, the message will be sent immediately by mobily.ws. 
 This library will not check if the defined time is in the future.
@@ -166,7 +175,7 @@ You can define the time on which the message should be sent by mobily.ws by call
             ->time(Carbon::parse("+1 week);
     }
 ```
-The time method accepts either a DateTime object or a timestamp.
+The `time` method accepts either a DateTime object or a timestamp.
 
 ### Available Message methods
 In your notification, you must define a method `toMobilyWs` which will receive the notifiable entity (e.g User model) and an instance of `MobilyWsMessage`. 
@@ -174,11 +183,15 @@ In your notification, you must define a method `toMobilyWs` which will receive t
 This method should return the text of the message to be sent as an SMS to mobily.ws or an instance of `MobilyWsMessage`. 
 
 ```php
+<?php
+
+use NotificationChannels\MobilyWs\MobilyWsMessage;
+            //
     /**
      * Get the text message of the SMS.
      *
      * @param  mixed  $notifiable
-     * @return string|MobilyWsMessage 
+     * @return \NotificationChannels\MobilyWs\MobilyWsMessage|string
      */
     public function toMobilyWs($notifiable)
     {
