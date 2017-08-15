@@ -5,40 +5,40 @@ namespace NotificationChannels\MobilyWs;
 class MobilyWsMessage
 {
     /** @var string */
-    public $msg;
+    public $text;
 
     /**
      * Create new instance of mobilyWsMessage.
      *
-     * @param string $msg
+     * @param string $text
      *
      * @return static
      */
-    public static function create($msg = '')
+    public static function create($text = '')
     {
-        return new static($msg);
+        return new static($text);
     }
 
     /**
      * MobilyWsMessage constructor.
      *
-     * @param string $msg
+     * @param string $text
      */
-    public function __construct($msg = '')
+    public function __construct($text = '')
     {
-        $this->msg = $msg;
+        $this->text = $text;
     }
 
     /**
      * Set the Content of the SMS message.
      *
-     * @param $msg
+     * @param $text
      *
      * @return $this
      */
-    public function msg($msg)
+    public function text($text)
     {
-        $this->msg = $msg;
+        $this->text = $text;
 
         return $this;
     }

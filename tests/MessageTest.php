@@ -22,16 +22,16 @@ class MessageTest extends \PHPUnit_Framework_TestCase
         $message = new MobilyWsMessage('Message content is here');
         
         $this->assertInstanceOf(MobilyWsMessage::class, $message);
-        $this->assertEquals('Message content is here', $message->msg);
+        $this->assertEquals('Message content is here', $message->text);
     }
     
     /** @test */
     public function it_can_set_content()
     {
         $message = new MobilyWsMessage();
-        $message->msg('Message content is here');
+        $message->text('Message content is here');
         
-        $this->assertEquals('Message content is here', $message->msg);
+        $this->assertEquals('Message content is here', $message->text);
     }
     
     /** @test */
@@ -39,7 +39,7 @@ class MessageTest extends \PHPUnit_Framework_TestCase
     {
         $message = MobilyWsMessage::create('Message content is here');
         
-        $this->assertEquals('Message content is here', $message->msg);
+        $this->assertEquals('Message content is here', $message->text);
     }
     
 }

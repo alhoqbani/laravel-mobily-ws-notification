@@ -106,7 +106,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $params = [
             'applicationType' => '68',
             'lang'            => '3',
-            'msg'             => $message->msg,
+            'msg'             => $message->text,
             'numbers'         => $number = '966550000000',
         ];
 

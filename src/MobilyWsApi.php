@@ -52,7 +52,7 @@ class MobilyWsApi
     public function sendMessage(MobilyWsMessage $message, $number)
     {
         $params = [
-            'msg' => $message->msg,
+            'msg' => $message->text,
             'numbers' => $number,
         ];
         
