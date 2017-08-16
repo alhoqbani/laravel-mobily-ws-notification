@@ -212,7 +212,8 @@ or set the text message using the `msg()` method:
 Method `toMobilyWs` will receive an instance of `MobilyWsMessage` as the 2nd argument.
 #### list of available methods :
 `text()` To add the content of the text message
-'time()' To set time of the scheduled sms.
+
+`time()` To set time of the scheduled sms.
 
 ## TODO
 - [ ] Validate mobile numbers
@@ -222,7 +223,7 @@ Method `toMobilyWs` will receive an instance of `MobilyWsMessage` as the 2nd arg
 - [x] Add the option to send Scheduled SMS
 - [ ] Add the the rest of params (MsgID, msgKey, deleteKey, ~~timeSend~~, ~~dateSend~~)
 - [ ] Translate mobily.ws error messages
-- [ ] Create artisan command to made mobily.ws notifications
+- [x] Create artisan command to made mobily.ws notifications
 - [ ] Add list of fired event to the documentation.
 
 ## Changelog
