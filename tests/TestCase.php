@@ -21,6 +21,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                 'authentication'  => 'auto',
                 'mobile'          => '96650000',
                 'password'        => '123',
+                'apiKey'          => 'someApiKey',
                 'sender'          => 'sender',
                 'applicationType' => 68,
                 'lang'            => '3',
