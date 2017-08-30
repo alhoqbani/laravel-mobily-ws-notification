@@ -12,7 +12,7 @@ use GuzzleHttp\Handler\MockHandler;
 use function GuzzleHttp\Psr7\parse_query;
 use NotificationChannels\MobilyWs\MobilyWsApi;
 use NotificationChannels\MobilyWs\MobilyWsConfig;
-use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
+use NotificationChannels\MobilyWs\Exceptions\CouldNotSendMobilyWsNotification;
 use NotificationChannels\MobilyWs\MobilyWsMessage;
 
 class ApiTest extends TestCase
@@ -245,14 +245,14 @@ class ApiTest extends TestCase
 
         try {
             $api->send($params);
-        } catch (CouldNotSendNotification $e) {
+        } catch (CouldNotSendMobilyWsNotification $e) {
             $this->assertContains('Request to mobily.ws failed', $e->getMessage());
             $this->assertEquals('403', $e->getCode());
 
             return;
         }
 
-        $this->fail('CouldNotSendNotification exception was not raised');
+        $this->fail('CouldNotSendMobilyWsNotification exception was not raised');
     }
     
     /**

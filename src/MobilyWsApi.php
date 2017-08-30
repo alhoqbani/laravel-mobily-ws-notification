@@ -4,7 +4,7 @@ namespace NotificationChannels\MobilyWs;
 
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\RequestException;
-use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
+use NotificationChannels\MobilyWs\Exceptions\CouldNotSendMobilyWsNotification;
 
 class MobilyWsApi
 {
@@ -72,7 +72,7 @@ class MobilyWsApi
      * @param array $payload
      *
      * @return array
-     * @throws \NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification
+     * @throws \NotificationChannels\MobilyWs\Exceptions\CouldNotSendMobilyWsNotification
      * @internal param array $params
      *
      */
@@ -87,9 +87,9 @@ class MobilyWsApi
                     'message' => $this->msgSendResponse($code),
                 ];
             }
-            throw CouldNotSendNotification::someErrorWhenSendingSms($response);
+            throw CouldNotSendMobilyWsNotification::someErrorWhenSendingSms($response);
         } catch (RequestException $exception) {
-            throw CouldNotSendNotification::couldNotSendRequestToMobilyWs($exception);
+            throw CouldNotSendMobilyWsNotification::couldNotSendRequestToMobilyWs($exception);
         }
     }
 

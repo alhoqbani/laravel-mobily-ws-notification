@@ -5,7 +5,7 @@ namespace NotificationChannels\MobilyWs;
 use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 use NotificationChannels\MobilyWs\Console\MobilyWsNotificationMakeCommand;
-use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
+use NotificationChannels\MobilyWs\Exceptions\CouldNotSendMobilyWsNotification;
 
 class MobilyWsServiceProvider extends ServiceProvider
 {
@@ -19,7 +19,7 @@ class MobilyWsServiceProvider extends ServiceProvider
             ->give(function () {
                 $mobilyWsConfig = $this->app['config']['mobilyws'];
                 if (is_null($mobilyWsConfig)) {
-                    throw CouldNotSendNotification::withErrorMessage('Config file was not found. Please publish the config file');
+                    throw CouldNotSendMobilyWsNotification::withErrorMessage('Config file was not found. Please publish the config file');
                 }
 
                 return new MobilyWsApi(

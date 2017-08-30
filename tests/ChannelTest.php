@@ -8,7 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Notifications\Notification;
 use NotificationChannels\MobilyWs\MobilyWsApi;
 use NotificationChannels\MobilyWs\MobilyWsChannel;
-use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
+use NotificationChannels\MobilyWs\Exceptions\CouldNotSendMobilyWsNotification;
 use NotificationChannels\MobilyWs\MobilyWsMessage;
 
 /**
@@ -79,7 +79,7 @@ class ChannelTest extends TestCase
 
         try {
             $this->channel->send($this->notifiable, $notificationWithArray);
-        } catch (CouldNotSendNotification $e) {
+        } catch (CouldNotSendMobilyWsNotification $e) {
             $this->assertContains(
                 'toMobilyWs must return a string or instance of NotificationChannels\MobilyWs\MobilyWsMessage. Instance of array returned',
                 $e->getMessage()
@@ -88,11 +88,11 @@ class ChannelTest extends TestCase
             return;
         }
 
-        $this->fail('CouldNotSendNotification exception was not raised');
+        $this->fail('CouldNotSendMobilyWsNotification exception was not raised');
     }
 
     /** @test
-     * @expectedException \NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
+     * @expectedException \NotificationChannels\MobilyWs\Exceptions\CouldNotSendMobilyWsNotification;
      */
     public function it_fires_failure_event_on_failure()
     {
@@ -104,7 +104,7 @@ class ChannelTest extends TestCase
 
         try {
             $this->channel->send($this->notifiable, new TestNotification('Text message'));
-        } catch (CouldNotSendNotification $e) {
+        } catch (CouldNotSendMobilyWsNotification $e) {
             $this->events->shouldHaveReceived('fire');
         }
     }
@@ -120,13 +120,13 @@ class ChannelTest extends TestCase
 
         try {
             $this->channel->send($this->notifiable, new TestNotification('Text message'));
-        } catch (CouldNotSendNotification $e) {
+        } catch (CouldNotSendMobilyWsNotification $e) {
             $this->assertContains('رصيدك غير كافي لإتمام عملية الإرسال', $e->getMessage());
 
             return;
         }
 
-        $this->fail('CouldNotSendNotification exception was not raised');
+        $this->fail('CouldNotSendMobilyWsNotification exception was not raised');
     }
 
     /** @test */
@@ -134,13 +134,13 @@ class ChannelTest extends TestCase
     {
         try {
             $this->channel->send($this->notifiable, new Notification());
-        } catch (CouldNotSendNotification $e) {
+        } catch (CouldNotSendMobilyWsNotification $e) {
             $this->assertContains('MobilyWs notifications must have toMobilyWs method', $e->getMessage());
 
             return;
         }
 
-        $this->fail('CouldNotSendNotification exception was not raised');
+        $this->fail('CouldNotSendMobilyWsNotification exception was not raised');
     }
     
     /** @test */

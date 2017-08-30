@@ -58,7 +58,7 @@ class ServiceProviderTest extends MockeryTestCase
     }
 
     /** @test
-     * @expectedException \NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification
+     * @expectedException \NotificationChannels\MobilyWs\Exceptions\CouldNotSendMobilyWsNotification
      */
     public function it_throw_an_exception_when_there_is_no_config_file()
     {

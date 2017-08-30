@@ -5,7 +5,7 @@ namespace NotificationChannels\MobilyWs;
 use Carbon\Carbon;
 use DateTime;
 use DateTimeInterface;
-use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
+use NotificationChannels\MobilyWs\Exceptions\CouldNotSendMobilyWsNotification;
 
 class MobilyWsMessage
 {
@@ -58,7 +58,7 @@ class MobilyWsMessage
      *
      * @return $this
      *
-     * @throws CouldNotSendNotification
+     * @throws CouldNotSendMobilyWsNotification
      */
     public function time($time)
     {
@@ -72,7 +72,7 @@ class MobilyWsMessage
             return $this;
         }
 
-        throw CouldNotSendNotification::withErrorMessage(
+        throw CouldNotSendMobilyWsNotification::withErrorMessage(
             sprintf('Time must be a timestamp or an object implementing DateTimeInterface. %s is given', gettype($time))
         );
     }

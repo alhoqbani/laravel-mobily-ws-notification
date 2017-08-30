@@ -5,7 +5,7 @@ namespace NotificationChannels\MobilyWs;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Notifications\Events\NotificationFailed;
 use Illuminate\Notifications\Notification;
-use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
+use NotificationChannels\MobilyWs\Exceptions\CouldNotSendMobilyWsNotification;
 
 class MobilyWsChannel
 {
@@ -35,12 +35,12 @@ class MobilyWsChannel
      *
      * @return string
      *
-     * @throws \NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification
+     * @throws \NotificationChannels\MobilyWs\Exceptions\CouldNotSendMobilyWsNotification
      */
     public function send($notifiable, Notification $notification)
     {
         if (!method_exists($notification, 'toMobilyWs')) {
-            throw CouldNotSendNotification::withErrorMessage('MobilyWs notifications must have toMobilyWs method');
+            throw CouldNotSendMobilyWsNotification::withErrorMessage('MobilyWs notifications must have toMobilyWs method');
         }
         $message = $notification->toMobilyWs($notifiable, new MobilyWsMessage());
         $number = $notifiable->routeNotificationFor('MobilyWs') ?: $notifiable->phone_number;
@@ -55,7 +55,7 @@ class MobilyWsChannel
             new NotificationFailed($notifiable, $notification, 'mobily-ws', $response)
         );
 
-        throw CouldNotSendNotification::mobilyWsRespondedWithAnError($response['code'], $response['message']);
+        throw CouldNotSendMobilyWsNotification::mobilyWsRespondedWithAnError($response['code'], $response['message']);
     }
 
     /**
@@ -64,7 +64,7 @@ class MobilyWsChannel
      *
      * @return array
      *
-     * @throws CouldNotSendNotification
+     * @throws CouldNotSendMobilyWsNotification
      */
     private function dispatchRequest($message, $number)
     {
@@ -80,7 +80,7 @@ class MobilyWsChannel
                 MobilyWsMessage::class,
                 gettype($message)
             );
-            throw CouldNotSendNotification::withErrorMessage($errorMessage);
+            throw CouldNotSendMobilyWsNotification::withErrorMessage($errorMessage);
         }
 
         return $response;

@@ -2,7 +2,7 @@
 
 namespace NotificationChannels\MobilyWs\Test;
 
-use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
+use NotificationChannels\MobilyWs\Exceptions\CouldNotSendMobilyWsNotification;
 use NotificationChannels\MobilyWs\MobilyWsConfig;
 
 class ConfigTest extends TestCase
@@ -62,7 +62,7 @@ class ConfigTest extends TestCase
         try {
             $configArray = $this->getConfigs(['authentication' => null]);
             $mobilyWsConfig = new MobilyWsConfig($configArray);
-        } catch (CouldNotSendNotification $e) {
+        } catch (CouldNotSendMobilyWsNotification $e) {
             $this->assertEquals(
               $e->getMessage(),
               "Please set the authentication method in the mobilyws config file"
@@ -145,7 +145,7 @@ class ConfigTest extends TestCase
         try {
             $configArray = $this->getConfigs(['authentication' => 'unsupportedMethod']);
             $mobilyWsConfig = new MobilyWsConfig($configArray);
-        } catch (CouldNotSendNotification $e) {
+        } catch (CouldNotSendMobilyWsNotification $e) {
             $this->assertEquals(
                 $e->getMessage(),
                 "Method unsupportedMethod is not supported. Please choose from: (apiKey, password, auto)"
@@ -168,7 +168,7 @@ class ConfigTest extends TestCase
             ]);
             
             $mobilyWsConfig = new MobilyWsConfig($configArray);
-        } catch (CouldNotSendNotification $e) {
+        } catch (CouldNotSendMobilyWsNotification $e) {
             $this->assertEquals(
                 $e->getMessage(),
                 "No credentials were provided. Please set your (mobile/password) or apiKey in the config file"
@@ -190,7 +190,7 @@ class ConfigTest extends TestCase
             ]);
             
             $mobilyWsConfig = new MobilyWsConfig($configArray);
-        } catch (CouldNotSendNotification $e) {
+        } catch (CouldNotSendMobilyWsNotification $e) {
             $this->assertEquals(
                 $e->getMessage(),
                 "No credentials were provided. Please set your (mobile/password) or apiKey in the config file"

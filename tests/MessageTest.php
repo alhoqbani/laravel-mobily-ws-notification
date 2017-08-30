@@ -3,7 +3,7 @@
 namespace NotificationChannels\MobilyWs\Test;
 
 use Carbon\Carbon;
-use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
+use NotificationChannels\MobilyWs\Exceptions\CouldNotSendMobilyWsNotification;
 use NotificationChannels\MobilyWs\MobilyWsMessage;
 
 class MessageTest extends TestCase
@@ -88,7 +88,7 @@ class MessageTest extends TestCase
         
         try {
             $message->time(['invalid time format']);
-        } catch (CouldNotSendNotification $exception) {
+        } catch (CouldNotSendMobilyWsNotification $exception) {
             $this->assertContains(
                 "Time must be a timestamp or an object implementing DateTimeInterface. array is given",
                 $exception->getMessage()

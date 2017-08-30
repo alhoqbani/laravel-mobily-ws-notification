@@ -2,7 +2,7 @@
 
 namespace NotificationChannels\MobilyWs;
 
-use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
+use NotificationChannels\MobilyWs\Exceptions\CouldNotSendMobilyWsNotification;
 
 class MobilyWsConfig
 {
@@ -75,14 +75,14 @@ class MobilyWsConfig
                 return $this->authMethod = $config['authentication'];
             }
 
-            throw CouldNotSendNotification::withErrorMessage(
+            throw CouldNotSendMobilyWsNotification::withErrorMessage(
                 sprintf('Method %s is not supported. Please choose from: (apiKey, password, auto)',
                     $config['authentication']
                 )
             );
         }
 
-        throw CouldNotSendNotification::withErrorMessage('Please set the authentication method in the mobilyws config file');
+        throw CouldNotSendMobilyWsNotification::withErrorMessage('Please set the authentication method in the mobilyws config file');
     }
 
     protected function getAutoCredentials()
@@ -102,7 +102,7 @@ class MobilyWsConfig
     protected function validateCredentials()
     {
         if (!isset($this->config['apiKey']) && !isset($this->config['mobile'], $this->config['password'])) {
-            throw CouldNotSendNotification::withErrorMessage('No credentials were provided. Please set your (mobile/password) or apiKey in the config file');
+            throw CouldNotSendMobilyWsNotification::withErrorMessage('No credentials were provided. Please set your (mobile/password) or apiKey in the config file');
         }
     }
 }

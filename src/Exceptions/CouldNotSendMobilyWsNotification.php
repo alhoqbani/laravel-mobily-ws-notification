@@ -5,7 +5,7 @@ namespace NotificationChannels\MobilyWs\Exceptions;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Exception\RequestException;
 
-class CouldNotSendNotification extends \Exception
+class CouldNotSendMobilyWsNotification extends \Exception
 {
     /**
      * Thrown when mobily.ws return a response body other than '1'.
