@@ -53,7 +53,7 @@ You must have an account with [MobilyWs](https://www.mobily.ws)  to be able to u
 > This package has no affiliation with mobily.ws whatsoever. 
 
 #### Credentials.
-There two methods of authentication when using mobily.ws api. 
+There are two methods of authentication when using mobily.ws api. 
 
 You could send requests using your login credentials (mobile/password),
  or by using the apiKey which you can generate from your mobily.ws account.
@@ -63,7 +63,7 @@ You must add mobily.ws credentials to your `.env` file.
 // Mobile number and password used for log in.
 MOBILY_WS_MOBILE= 
 MOBILY_WS_PASSWORD=
-or your apiKey:
+// or your apiKey:
 MOBILY_WS_API_KEY=
 // name/number of the sender which must be approved by mobily.ws for GCC
 MOBILY_WS_SENDER=
