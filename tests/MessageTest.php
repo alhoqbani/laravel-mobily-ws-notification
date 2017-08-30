@@ -115,7 +115,7 @@ class MessageTest extends \PHPUnit_Framework_TestCase
     }
     
     /** @test */
-    public function it_return_null_when_there_time_is_not_set()
+    public function it_return_null_when_time_is_not_set()
     {
         $message = new MobilyWsMessage();
         
