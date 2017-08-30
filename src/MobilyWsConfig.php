@@ -48,10 +48,10 @@ class MobilyWsConfig
         $authenticationMethods = ['apiKey', 'password', 'auto'];
 
         if (isset($config['authentication'])) {
-            switch (true) {
-                case in_array($config['authentication'], $authenticationMethods):
-                    return $this->authMethod = $config['authentication'];
+            if (in_array($config['authentication'], $authenticationMethods)) {
+                return $this->authMethod = $config['authentication'];
             }
+            
             throw CouldNotSendNotification::withErrorMessage(
                 sprintf('Method %s is not supported. Please choose from: (apiKey, password, auto)',
                     $config['authentication']
