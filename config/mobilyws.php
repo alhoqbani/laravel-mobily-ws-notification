@@ -13,6 +13,8 @@ return [
     | if not found, we look for the mobile and password
     |
     */
+    
+    // Authentication mode
     'authentication' => 'auto',
     
     // Set yor login credentials to communicate with mobily.ws Api
@@ -20,7 +22,7 @@ return [
     'password' =>  env('MOBILY_WS_PASSWORD'),
     
     // Or use the generated apiKey from your mobily.ws account
-    'apiKey' => env('MOBILY_WS_PASSWORD_API_KEY'),
+    'apiKey' => env('MOBILY_WS_API_KEY'),
     
     // Name of Sender must be approved by mobily.ws
     'sender' => env('MOBILY_WS_SENDER'),
