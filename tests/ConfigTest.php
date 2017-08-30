@@ -2,6 +2,7 @@
 
 namespace NotificationChannels\MobilyWs\Test;
 
+use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 use NotificationChannels\MobilyWs\MobilyWsConfig;
 
 class ConfigTest extends \PHPUnit_Framework_TestCase
@@ -53,6 +54,23 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $configArray = $this->getConfigs(['authentication' => 'password']);
         $mobilyWsConfig = new MobilyWsConfig($configArray);
         $this->assertEquals('password', $mobilyWsConfig->getAuthenticationMethod());
+    }
+    
+    /** @test */
+    public function it_throws_an_exception_when_authentication_method_is_not_set()
+    {
+        try {
+            $configArray = $this->getConfigs(['authentication' => null]);
+            $mobilyWsConfig = new MobilyWsConfig($configArray);
+        } catch (CouldNotSendNotification $e) {
+            $this->assertEquals(
+              $e->getMessage(),
+              "Please set the authentication method in the mobilyws config file"
+            );
+            return;
+        }
+        
+        $this->fail('No exception was thrown when the authentication method was not set');
     }
 
     /** @test */
