@@ -4,6 +4,15 @@ namespace NotificationChannels\MobilyWs;
 
 class MobilyWsConfig
 {
+    
+    /**
+     * @var string The authentication method
+     */
+    private $authMethod;
+    
+    /**
+     * @var array
+     */
     private $config;
 
     /**
@@ -14,6 +23,12 @@ class MobilyWsConfig
     public function __construct($config)
     {
         $this->config = $config;
+        $this->authMethod =  $this->config['authentication'];
+    }
+    
+    public function getAuthenticationMethod()
+    {
+        return $this->authMethod;
     }
 
     public function __get($name)

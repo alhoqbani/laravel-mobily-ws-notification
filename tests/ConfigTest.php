@@ -38,6 +38,22 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($guzzle, $mobilyWsConfig->guzzle);
         $this->assertNull($mobilyWsConfig->propertyDoesNotExist);
     }
+    
+    /** @test */
+    public function it_return_the_correct_authentication_method()
+    {
+        $configArray = $this->getConfigs([]);
+        $mobilyWsConfig = new MobilyWsConfig($configArray);
+        $this->assertEquals('auto', $mobilyWsConfig->getAuthenticationMethod());
+        
+        $configArray = $this->getConfigs(['authentication' => 'apiKey']);
+        $mobilyWsConfig = new MobilyWsConfig($configArray);
+        $this->assertEquals('apiKey', $mobilyWsConfig->getAuthenticationMethod());
+        
+        $configArray = $this->getConfigs(['authentication' => 'password']);
+        $mobilyWsConfig = new MobilyWsConfig($configArray);
+        $this->assertEquals('password', $mobilyWsConfig->getAuthenticationMethod());
+    }
 
     /** @test */
     public function it_return_the_request_options()
@@ -56,6 +72,7 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
     {
         return array_merge(
             [
+                'authentication'  => 'auto',
                 'mobile'          => '96650000',
                 'password'        => '123',
                 'sender'          => 'sender',
