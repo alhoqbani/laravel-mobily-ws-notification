@@ -14,7 +14,7 @@ return [
     |
     */
     
-    // Authentication mode
+    // Authentication mode. possible values: api, password, or auto
     'authentication' => 'auto',
     
     // Set yor login credentials to communicate with mobily.ws Api
