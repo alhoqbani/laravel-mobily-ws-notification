@@ -130,35 +130,18 @@ class ApiTest extends TestCase
             'mobile'         => '0500000000',
             'password'       => 'anyPassword',
         ]);
-        
-        $container = [];
-        $history = Middleware::history($container);
-        $mock = new MockHandler([
-            new Response(200, [], 1),
-        ]);
-        $stack = HandlerStack::create($mock);
-        $stack->push($history);
-        $options = [
-            'base_uri' => 'http://mobily.ws/api/',
-            'handler' => $stack,
-        ];
-        $client = new Client($options);
-        $mobileWsConfig = new MobilyWsConfig($config);
-        $api = new MobilyWsApi($mobileWsConfig, $client);
+    
+        /** @var Request $request */
+        $request = $this->sendRequest($config);
 
-        $message = new MobilyWsMessage('SMS Text Message');
         $expectedParams = [
             'mobile'         => '0500000000',
             'password'       => 'anyPassword',
         ];
-
-        $api->sendMessage($message, '966550000000');
-
-        /** @var Request $request */
-        $request = $container[0]['request'];
-
-        $this->assertCount(1, $container);
-        $this->assertArraySubset($expectedParams, parse_query($request->getBody()->getContents()));
+        $actualParams = parse_query($request->getBody()->getContents());
+    
+        $this->assertArrayNotHasKey('apiKey', $actualParams);
+        $this->assertArraySubset($expectedParams, $actualParams);
     }
     
     /** @test */
@@ -171,33 +154,38 @@ class ApiTest extends TestCase
             'apiKey'         => 'someApiKey',
         ]);
         
-        $container = [];
-        $history = Middleware::history($container);
-        $mock = new MockHandler([
-            new Response(200, [], 1),
-        ]);
-        $stack = HandlerStack::create($mock);
-        $stack->push($history);
-        $options = [
-            'base_uri' => 'http://mobily.ws/api/',
-            'handler' => $stack,
-        ];
-        $client = new Client($options);
-        $mobileWsConfig = new MobilyWsConfig($config);
-        $api = new MobilyWsApi($mobileWsConfig, $client);
-
-        $message = new MobilyWsMessage('SMS Text Message');
+        /** @var Request $request */
+        $request = $this->sendRequest($config);
         $expectedParams = [
             'apiKey'         => 'someApiKey',
         ];
-
-        $api->sendMessage($message, '966550000000');
-
+        $actualParams = parse_query($request->getBody()->getContents());
+        
+        $this->assertArrayNotHasKey('mobile', $actualParams);
+        $this->assertArrayNotHasKey('password', $actualParams);
+        $this->assertArraySubset($expectedParams, $actualParams);
+    }
+    
+    /** @test */
+    public function it_send_request_with_correct_credentials_when_auth_method_is_auto()
+    {
+        $config = $this->getConfigs([
+            'authentication' => 'auto',
+            'mobile'         => '0500000000',
+            'password'       => 'anyPassword',
+            'apiKey'         => null,
+        ]);
+        
         /** @var Request $request */
-        $request = $container[0]['request'];
-
-        $this->assertCount(1, $container);
-        $this->assertArraySubset($expectedParams, parse_query($request->getBody()->getContents()));
+        $request = $this->sendRequest($config);
+        $expectedParams = [
+            'mobile'         => '0500000000',
+            'password'       => 'anyPassword',
+        ];
+        $actualParams = parse_query($request->getBody()->getContents());
+        
+        $this->assertArrayNotHasKey('apiKey', $actualParams);
+        $this->assertArraySubset($expectedParams, $actualParams);
     }
 
     /** @test */
@@ -265,5 +253,34 @@ class ApiTest extends TestCase
         }
 
         $this->fail('CouldNotSendNotification exception was not raised');
+    }
+    
+    /**
+     * Mock the request using the api and return the history container
+     * @param $config
+     *
+     * @return array
+     */
+    protected function sendRequest($config)
+    {
+        $container = [];
+        $history = Middleware::history($container);
+        $mock = new MockHandler([
+            new Response(200, [], 1),
+        ]);
+        $stack = HandlerStack::create($mock);
+        $stack->push($history);
+        $options = [
+            'base_uri' => 'http://mobily.ws/api/',
+            'handler'  => $stack,
+        ];
+        $client = new Client($options);
+        $mobileWsConfig = new MobilyWsConfig($config);
+        $api = new MobilyWsApi($mobileWsConfig, $client);
+        
+        $message = new MobilyWsMessage('SMS Text Message');
+        $api->sendMessage($message, '966550000000');
+        
+        return $container[0]['request'];
     }
 }
