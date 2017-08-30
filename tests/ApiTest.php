@@ -15,7 +15,7 @@ use NotificationChannels\MobilyWs\MobilyWsConfig;
 use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 use NotificationChannels\MobilyWs\MobilyWsMessage;
 
-class ApiTest extends \PHPUnit_Framework_TestCase
+class ApiTest extends TestCase
 {
     protected function setUp()
     {
@@ -189,27 +189,5 @@ class ApiTest extends \PHPUnit_Framework_TestCase
 
         $this->fail('CouldNotSendNotification exception was not raised');
     }
-
-    private function getConfigs(array $overrides = [])
-    {
-        return array_merge(
-            [
-                'mobile'          => '96650000',
-                'password'        => '123',
-                'sender'          => 'sender',
-                'applicationType' => 68,
-                'lang'            => '3',
-                'guzzle'          => [
-                    'client'  => [
-                        'base_uri' => 'http://mobily.ws/api/',
-                    ],
-                    'request' => [
-                        'http_errors' => true,
-                        'debug'       => false,
-                    ],
-                ],
-            ],
-            $overrides
-        );
-    }
+    
 }

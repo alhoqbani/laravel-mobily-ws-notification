@@ -5,7 +5,7 @@ namespace NotificationChannels\MobilyWs\Test;
 use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 use NotificationChannels\MobilyWs\MobilyWsConfig;
 
-class ConfigTest extends \PHPUnit_Framework_TestCase
+class ConfigTest extends TestCase
 {
     protected function setUp()
     {
@@ -105,27 +105,4 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($requestOptions, $mobilyWsConfig->request);
     }
 
-    private function getConfigs(array $overrides = [])
-    {
-        return array_merge(
-            [
-                'authentication'  => 'auto',
-                'mobile'          => '96650000',
-                'password'        => '123',
-                'sender'          => 'sender',
-                'applicationType' => 68,
-                'lang'            => '3',
-                'guzzle'          => [
-                    'client'  => [
-                        'base_uri' => 'http://mobily.ws/api/',
-                    ],
-                    'request' => [
-                        'http_errors' => true,
-                        'debug'       => false,
-                    ],
-                ],
-            ],
-            $overrides
-        );
-    }
 }
