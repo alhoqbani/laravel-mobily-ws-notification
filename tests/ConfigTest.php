@@ -158,6 +158,50 @@ class ConfigTest extends TestCase
     }
     
     /** @test */
+    public function it_throws_an_exception_when_no_credentials_are_provided()
+    {
+        try {
+            $configArray = $this->getConfigs([
+                'mobile' => null,
+                'password' => null,
+                'apiKey' => null,
+            ]);
+            
+            $mobilyWsConfig = new MobilyWsConfig($configArray);
+        } catch (CouldNotSendNotification $e) {
+            $this->assertEquals(
+                $e->getMessage(),
+                "No credentials were provided. Please set your (mobile/password) or apiKey in the config file"
+            );
+            return;
+        }
+        
+        $this->fail('No exception was thrown when no credentials were provided');
+    }
+    
+    /** @test */
+    public function it_throws_an_exception_when_credentials_are_missing_password()
+    {
+        try {
+            $configArray = $this->getConfigs([
+                'mobile' => '05500000000',
+                'password' => null,
+                'apiKey' => null,
+            ]);
+            
+            $mobilyWsConfig = new MobilyWsConfig($configArray);
+        } catch (CouldNotSendNotification $e) {
+            $this->assertEquals(
+                $e->getMessage(),
+                "No credentials were provided. Please set your (mobile/password) or apiKey in the config file"
+            );
+            return;
+        }
+        
+        $this->fail('No exception was thrown when no credentials were provided');
+    }
+    
+    /** @test */
     public function it_return_the_request_options()
     {
         $configArray = $this->getConfigs();

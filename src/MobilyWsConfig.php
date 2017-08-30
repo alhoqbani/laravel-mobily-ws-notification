@@ -6,14 +6,13 @@ use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 
 class MobilyWsConfig
 {
-    
     /**
      * @var array Supported authentication methods
      */
     protected $authenticationMethods = [
-        'apiKey', 'password', 'auto'
+        'apiKey', 'password', 'auto',
     ];
-    
+
     /**
      * @var string The authentication method
      */
@@ -33,6 +32,7 @@ class MobilyWsConfig
     {
         $this->config = $config;
         $this->setAuthenticationMethod($config);
+        $this->validateCredentials();
     }
 
     public function getCredentials()
@@ -41,18 +41,17 @@ class MobilyWsConfig
             case 'password':
                 return [
                   'mobile' => $this->mobile,
-                  'password' => $this->password
+                  'password' => $this->password,
                 ];
             case 'apiKey':
                 return [
-                  'apiKey' => $this->apiKey
+                  'apiKey' => $this->apiKey,
                 ];
             case 'auto':
                 return $this->getAutoCredentials();
         }
-        
     }
-    
+
     public function getAuthenticationMethod()
     {
         return $this->authMethod;
@@ -71,12 +70,11 @@ class MobilyWsConfig
 
     protected function setAuthenticationMethod($config)
     {
-
         if (isset($config['authentication'])) {
             if (in_array($config['authentication'], $this->authenticationMethods)) {
                 return $this->authMethod = $config['authentication'];
             }
-            
+
             throw CouldNotSendNotification::withErrorMessage(
                 sprintf('Method %s is not supported. Please choose from: (apiKey, password, auto)',
                     $config['authentication']
@@ -86,17 +84,25 @@ class MobilyWsConfig
 
         throw CouldNotSendNotification::withErrorMessage('Please set the authentication method in the mobilyws config file');
     }
-    
+
     protected function getAutoCredentials()
     {
         if ($this->apiKey) {
             return [
-              'apiKey' => $this->apiKey
+              'apiKey' => $this->apiKey,
             ];
         }
+
         return [
             'mobile' => $this->mobile,
-            'password' => $this->password
+            'password' => $this->password,
         ];
+    }
+
+    protected function validateCredentials()
+    {
+        if (!isset($this->config['apiKey']) && !isset($this->config['mobile'], $this->config['password'])) {
+            throw CouldNotSendNotification::withErrorMessage('No credentials were provided. Please set your (mobile/password) or apiKey in the config file');
+        }
     }
 }
