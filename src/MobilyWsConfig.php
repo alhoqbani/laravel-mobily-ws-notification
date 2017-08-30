@@ -45,11 +45,11 @@ class MobilyWsConfig
 
     protected function setAuthenticationMethod($config)
     {
+        $authenticationMethods = ['apiKey', 'password', 'auto'];
+
         if (isset($config['authentication'])) {
-            switch ($config['authentication']) {
-                case 'apiKey':
-                case 'password':
-                case 'auto':
+            switch (true) {
+                case in_array($config['authentication'], $authenticationMethods):
                     return $this->authMethod = $config['authentication'];
             }
             throw CouldNotSendNotification::withErrorMessage(
