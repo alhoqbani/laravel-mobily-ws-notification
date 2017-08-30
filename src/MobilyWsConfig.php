@@ -6,6 +6,14 @@ use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 
 class MobilyWsConfig
 {
+    
+    /**
+     * @var array Supported authentication methods
+     */
+    protected $authenticationMethods = [
+        'apiKey', 'password', 'auto'
+    ];
+    
     /**
      * @var string The authentication method
      */
@@ -45,10 +53,9 @@ class MobilyWsConfig
 
     protected function setAuthenticationMethod($config)
     {
-        $authenticationMethods = ['apiKey', 'password', 'auto'];
 
         if (isset($config['authentication'])) {
-            if (in_array($config['authentication'], $authenticationMethods)) {
+            if (in_array($config['authentication'], $this->authenticationMethods)) {
                 return $this->authMethod = $config['authentication'];
             }
             
