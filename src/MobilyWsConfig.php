@@ -51,13 +51,12 @@ class MobilyWsConfig
                 case 'password':
                 case 'auto':
                     return $this->authMethod = $config['authentication'];
-                default:
-                    throw CouldNotSendNotification::withErrorMessage(
-                        sprintf('Method %s is not supported. Please choose from: (apiKey, password, auto)',
-                            $config['authentication']
-                        )
-                    );
             }
+            throw CouldNotSendNotification::withErrorMessage(
+                sprintf('Method %s is not supported. Please choose from: (apiKey, password, auto)',
+                    $config['authentication']
+                )
+            );
         }
 
         throw CouldNotSendNotification::withErrorMessage('Please set the authentication method in the mobilyws config file');
