@@ -47,6 +47,24 @@ class MobilyWsConfig
     protected function setAuthenticationMethod($config)
     {
         if (isset($config['authentication'])) {
+            switch ($config['authentication']) {
+                case 'apiKey':
+                    $this->authMethod = 'apiKey';
+                    break;
+                case 'password':
+                    $this->authMethod = 'password';
+                    break;
+                case 'auto':
+                    $this->authMethod = 'auto';
+                    break;
+                default:
+                    throw CouldNotSendNotification::withErrorMessage(
+                        sprintf("Method %s is not supported. Please choose from: (apiKey, password, auto)",
+                            $config['authentication']
+                        )
+                    );
+            }
+            
             $this->authMethod = $config['authentication'];
             return;
         }

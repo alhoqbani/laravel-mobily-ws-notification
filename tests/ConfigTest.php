@@ -72,7 +72,26 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         
         $this->fail('No exception was thrown when the authentication method was not set');
     }
-
+    
+    
+    /** @test */
+    public function it_throws_an_exception_when_the_authentication_method_is_not_supported()
+    {
+        try {
+            $configArray = $this->getConfigs(['authentication' => 'unsupportedMethod']);
+            $mobilyWsConfig = new MobilyWsConfig($configArray);
+        } catch (CouldNotSendNotification $e) {
+            $this->assertEquals(
+                $e->getMessage(),
+                "Method unsupportedMethod is not supported. Please choose from: (apiKey, password, auto)"
+            );
+            
+            return;
+        }
+        
+        $this->fail('No exception was thrown when the provided authentication is not supported');
+    }
+    
     /** @test */
     public function it_return_the_request_options()
     {
