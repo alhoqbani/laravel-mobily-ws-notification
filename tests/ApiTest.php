@@ -15,7 +15,7 @@ use NotificationChannels\MobilyWs\MobilyWsConfig;
 use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 use NotificationChannels\MobilyWs\MobilyWsMessage;
 
-class ApiTest extends \PHPUnit_Framework_TestCase
+class ApiTest extends TestCase
 {
     protected function setUp()
     {
@@ -69,9 +69,9 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $api = new MobilyWsApi($mobileWsConfig, $client);
         $params = [
             'applicationType' => '68',
-            'lang'            => '3',
-            'msg'             => 'SMS Text Message',
-            'numbers'         => '966550000000',
+            'lang' => '3',
+            'msg' => 'SMS Text Message',
+            'numbers' => '966550000000',
         ];
 
         $api->sendString($params);
@@ -84,7 +84,7 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('/api/msgSend.php', $request->getRequestTarget());
         $this->assertArraySubset($params, parse_query($request->getBody()->getContents()));
     }
-    
+
     /** @test */
     public function it_send_request_with_correct_params_when_given_MobilyWsMessage_instance()
     {
@@ -102,13 +102,13 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $client = new Client($options);
         $mobileWsConfig = new MobilyWsConfig($this->getConfigs());
         $api = new MobilyWsApi($mobileWsConfig, $client);
-        
+
         $message = new MobilyWsMessage('SMS Text Message');
         $params = [
             'applicationType' => '68',
-            'lang'            => '3',
-            'msg'             => $message->text,
-            'numbers'         => $number = '966550000000',
+            'lang' => '3',
+            'msg' => $message->text,
+            'numbers' => $number = '966550000000',
         ];
 
         $api->sendMessage($message, $number);
@@ -122,7 +122,72 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $this->assertArraySubset($params, parse_query($request->getBody()->getContents()));
     }
     
+    /** @test */
+    public function it_send_request_with_correct_credentials_when_auth_method_is_password()
+    {
+        $config = $this->getConfigs([
+            'authentication' => 'password',
+            'mobile'         => '0500000000',
+            'password'       => 'anyPassword',
+        ]);
     
+        /** @var Request $request */
+        $request = $this->sendRequest($config);
+
+        $expectedParams = [
+            'mobile'         => '0500000000',
+            'password'       => 'anyPassword',
+        ];
+        $actualParams = parse_query($request->getBody()->getContents());
+    
+        $this->assertArrayNotHasKey('apiKey', $actualParams);
+        $this->assertArraySubset($expectedParams, $actualParams);
+    }
+    
+    /** @test */
+    public function it_send_request_with_correct_credentials_when_auth_method_is_apiKey()
+    {
+        $config = $this->getConfigs([
+            'authentication' => 'apiKey',
+            'mobile'         => '0500000000',
+            'password'       => 'anyPassword',
+            'apiKey'         => 'someApiKey',
+        ]);
+        
+        /** @var Request $request */
+        $request = $this->sendRequest($config);
+        $expectedParams = [
+            'apiKey'         => 'someApiKey',
+        ];
+        $actualParams = parse_query($request->getBody()->getContents());
+        
+        $this->assertArrayNotHasKey('mobile', $actualParams);
+        $this->assertArrayNotHasKey('password', $actualParams);
+        $this->assertArraySubset($expectedParams, $actualParams);
+    }
+    
+    /** @test */
+    public function it_send_request_with_correct_credentials_when_auth_method_is_auto()
+    {
+        $config = $this->getConfigs([
+            'authentication' => 'auto',
+            'mobile'         => '0500000000',
+            'password'       => 'anyPassword',
+            'apiKey'         => null,
+        ]);
+        
+        /** @var Request $request */
+        $request = $this->sendRequest($config);
+        $expectedParams = [
+            'mobile'         => '0500000000',
+            'password'       => 'anyPassword',
+        ];
+        $actualParams = parse_query($request->getBody()->getContents());
+        
+        $this->assertArrayNotHasKey('apiKey', $actualParams);
+        $this->assertArraySubset($expectedParams, $actualParams);
+    }
+
     /** @test */
     public function it_send_date_and_time_with_request_when_message_time_is_set()
     {
@@ -140,21 +205,21 @@ class ApiTest extends \PHPUnit_Framework_TestCase
         $client = new Client($options);
         $mobileWsConfig = new MobilyWsConfig($this->getConfigs());
         $api = new MobilyWsApi($mobileWsConfig, $client);
-        
+
         $message = new MobilyWsMessage('SMS Text Message');
-        $message->time(Carbon::parse("+1 week"));
+        $message->time(Carbon::parse('+1 week'));
         $params = [
-            'msg'             => $message->text,
-            'numbers'         => $number = '966550000000',
-            'timeSend'         => $message->timeSend(),
-            'dateSend'         => $message->dateSend(),
+            'msg' => $message->text,
+            'numbers' => $number = '966550000000',
+            'timeSend' => $message->timeSend(),
+            'dateSend' => $message->dateSend(),
         ];
 
         $api->sendMessage($message, $number);
 
         /** @var Request $request */
         $request = $container[0]['request'];
-        
+
         $this->assertArraySubset($params, parse_query($request->getBody()->getContents()));
     }
 
@@ -189,27 +254,33 @@ class ApiTest extends \PHPUnit_Framework_TestCase
 
         $this->fail('CouldNotSendNotification exception was not raised');
     }
-
-    private function getConfigs(array $overrides = [])
+    
+    /**
+     * Mock the request using the api and return the history container
+     * @param $config
+     *
+     * @return array
+     */
+    protected function sendRequest($config)
     {
-        return array_merge(
-            [
-                'mobile'          => '96650000',
-                'password'        => '123',
-                'sender'          => 'sender',
-                'applicationType' => 68,
-                'lang'            => '3',
-                'guzzle'          => [
-                    'client'  => [
-                        'base_uri' => 'http://mobily.ws/api/',
-                    ],
-                    'request' => [
-                        'http_errors' => true,
-                        'debug'       => false,
-                    ],
-                ],
-            ],
-            $overrides
-        );
+        $container = [];
+        $history = Middleware::history($container);
+        $mock = new MockHandler([
+            new Response(200, [], 1),
+        ]);
+        $stack = HandlerStack::create($mock);
+        $stack->push($history);
+        $options = [
+            'base_uri' => 'http://mobily.ws/api/',
+            'handler'  => $stack,
+        ];
+        $client = new Client($options);
+        $mobileWsConfig = new MobilyWsConfig($config);
+        $api = new MobilyWsApi($mobileWsConfig, $client);
+        
+        $message = new MobilyWsMessage('SMS Text Message');
+        $api->sendMessage($message, '966550000000');
+        
+        return $container[0]['request'];
     }
 }

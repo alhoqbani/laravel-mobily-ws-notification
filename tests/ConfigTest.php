@@ -2,9 +2,10 @@
 
 namespace NotificationChannels\MobilyWs\Test;
 
+use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 use NotificationChannels\MobilyWs\MobilyWsConfig;
 
-class ConfigTest extends \PHPUnit_Framework_TestCase
+class ConfigTest extends TestCase
 {
     protected function setUp()
     {
@@ -38,7 +39,168 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($guzzle, $mobilyWsConfig->guzzle);
         $this->assertNull($mobilyWsConfig->propertyDoesNotExist);
     }
-
+    
+    /** @test */
+    public function it_return_the_correct_authentication_method()
+    {
+        $configArray = $this->getConfigs([]);
+        $mobilyWsConfig = new MobilyWsConfig($configArray);
+        $this->assertEquals('auto', $mobilyWsConfig->getAuthenticationMethod());
+        
+        $configArray = $this->getConfigs(['authentication' => 'apiKey']);
+        $mobilyWsConfig = new MobilyWsConfig($configArray);
+        $this->assertEquals('apiKey', $mobilyWsConfig->getAuthenticationMethod());
+        
+        $configArray = $this->getConfigs(['authentication' => 'password']);
+        $mobilyWsConfig = new MobilyWsConfig($configArray);
+        $this->assertEquals('password', $mobilyWsConfig->getAuthenticationMethod());
+    }
+    
+    /** @test */
+    public function it_throws_an_exception_when_authentication_method_is_not_set()
+    {
+        try {
+            $configArray = $this->getConfigs(['authentication' => null]);
+            $mobilyWsConfig = new MobilyWsConfig($configArray);
+        } catch (CouldNotSendNotification $e) {
+            $this->assertEquals(
+              $e->getMessage(),
+              "Please set the authentication method in the mobilyws config file"
+            );
+            return;
+        }
+        
+        $this->fail('No exception was thrown when the authentication method was not set');
+    }
+    
+    /** @test */
+    public function it_return_the_correct_authentication_credentials_when_auth_mode_is_password()
+    {
+        $configArray = $this->getConfigs([
+            'authentication' => 'password',
+            'mobile' => '05000000000',
+            'password' => 'somePassword',
+            'apiKey' => 'anyKey'
+        ]);
+        
+        $mobilyWsConfig = new MobilyWsConfig($configArray);
+        $expectedCredentials = [
+            'mobile' => '05000000000',
+            'password' => 'somePassword',
+        ];
+        $this->assertSame($expectedCredentials, $mobilyWsConfig->getCredentials());
+    }
+    
+    /** @test */
+    public function it_return_the_correct_authentication_credentials_when_auth_mode_is_api()
+    {
+        $configArray = $this->getConfigs([
+            'authentication' => 'apiKey',
+            'mobile' => '05000000000',
+            'password' => 'somePassword',
+            'apiKey' => 'anyKey'
+        ]);
+        
+        $mobilyWsConfig = new MobilyWsConfig($configArray);
+        $expectedCredentials = [
+            'apiKey' => 'anyKey',
+        ];
+        $this->assertSame($expectedCredentials, $mobilyWsConfig->getCredentials());
+    }
+    
+    /** @test */
+    public function it_return_the_correct_authentication_credentials_when_auth_mode_is_auto()
+    {
+        $configArray = $this->getConfigs([
+            'authentication' => 'auto',
+            'mobile' => '05000000000',
+            'password' => 'somePassword',
+            'apiKey' => null
+        ]);
+        
+        $mobilyWsConfig = new MobilyWsConfig($configArray);
+        $expectedCredentials = [
+            'mobile' => '05000000000',
+            'password' => 'somePassword',
+        ];
+        $this->assertSame($expectedCredentials, $mobilyWsConfig->getCredentials());
+        
+        $configArray = $this->getConfigs([
+            'authentication' => 'auto',
+            'mobile' => '05000000000',
+            'password' => 'somePassword',
+            'apiKey' => 'withApiKey'
+        ]);
+        
+        $mobilyWsConfig = new MobilyWsConfig($configArray);
+        $expectedCredentials = [
+            'apiKey' => 'withApiKey'
+        ];
+        $this->assertSame($expectedCredentials, $mobilyWsConfig->getCredentials());
+    }
+    
+    /** @test */
+    public function it_throws_an_exception_when_the_authentication_method_is_not_supported()
+    {
+        try {
+            $configArray = $this->getConfigs(['authentication' => 'unsupportedMethod']);
+            $mobilyWsConfig = new MobilyWsConfig($configArray);
+        } catch (CouldNotSendNotification $e) {
+            $this->assertEquals(
+                $e->getMessage(),
+                "Method unsupportedMethod is not supported. Please choose from: (apiKey, password, auto)"
+            );
+            
+            return;
+        }
+        
+        $this->fail('No exception was thrown when the provided authentication is not supported');
+    }
+    
+    /** @test */
+    public function it_throws_an_exception_when_no_credentials_are_provided()
+    {
+        try {
+            $configArray = $this->getConfigs([
+                'mobile' => null,
+                'password' => null,
+                'apiKey' => null,
+            ]);
+            
+            $mobilyWsConfig = new MobilyWsConfig($configArray);
+        } catch (CouldNotSendNotification $e) {
+            $this->assertEquals(
+                $e->getMessage(),
+                "No credentials were provided. Please set your (mobile/password) or apiKey in the config file"
+            );
+            return;
+        }
+        
+        $this->fail('No exception was thrown when no credentials were provided');
+    }
+    
+    /** @test */
+    public function it_throws_an_exception_when_credentials_are_missing_password()
+    {
+        try {
+            $configArray = $this->getConfigs([
+                'mobile' => '05500000000',
+                'password' => null,
+                'apiKey' => null,
+            ]);
+            
+            $mobilyWsConfig = new MobilyWsConfig($configArray);
+        } catch (CouldNotSendNotification $e) {
+            $this->assertEquals(
+                $e->getMessage(),
+                "No credentials were provided. Please set your (mobile/password) or apiKey in the config file"
+            );
+            return;
+        }
+        
+        $this->fail('No exception was thrown when no credentials were provided');
+    }
+    
     /** @test */
     public function it_return_the_request_options()
     {
@@ -52,26 +214,4 @@ class ConfigTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($requestOptions, $mobilyWsConfig->request);
     }
 
-    private function getConfigs(array $overrides = [])
-    {
-        return array_merge(
-            [
-                'mobile'          => '96650000',
-                'password'        => '123',
-                'sender'          => 'sender',
-                'applicationType' => 68,
-                'lang'            => '3',
-                'guzzle'          => [
-                    'client'  => [
-                        'base_uri' => 'http://mobily.ws/api/',
-                    ],
-                    'request' => [
-                        'http_errors' => true,
-                        'debug'       => false,
-                    ],
-                ],
-            ],
-            $overrides
-        );
-    }
 }

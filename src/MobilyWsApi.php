@@ -8,6 +8,10 @@ use NotificationChannels\MobilyWs\Exceptions\CouldNotSendNotification;
 
 class MobilyWsApi
 {
+    
+    /**  @var string mobily.ws endpoint for sending sms */
+    protected $endpoint = 'msgSend.php';
+    
     /** @var MobilyWsConfig */
     private $config;
 
@@ -74,9 +78,8 @@ class MobilyWsApi
      */
     public function send(array $payload)
     {
-        $endpoint = 'msgSend.php';
         try {
-            $response = $this->http->post($endpoint, $payload);
+            $response = $this->http->post($this->endpoint, $payload);
 
             if ($response->getStatusCode() == 200) {
                 return [
@@ -100,12 +103,10 @@ class MobilyWsApi
     protected function preparePayload($params)
     {
         $form = array_merge([
-            'mobile' => $this->config->mobile,
-            'password' => $this->config->password,
             'applicationType' => $this->config->applicationType,
             'lang' => $this->config->lang,
             'sender' => $this->config->sender,
-        ], $params);
+        ], $params, $this->config->getCredentials());
 
         return array_merge(
             ['form_params' => $form],

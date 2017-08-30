@@ -18,7 +18,7 @@ use NotificationChannels\MobilyWs\MobilyWsMessage;
  * @property \NotificationChannels\MobilyWs\Test\TestNotifiable   notifiable
  * @property \Mockery\MockInterface                               events
  */
-class ChannelTest extends \PHPUnit_Framework_TestCase
+class ChannelTest extends TestCase
 {
     protected function setUp()
     {
