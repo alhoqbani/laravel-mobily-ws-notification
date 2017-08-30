@@ -35,6 +35,24 @@ class MobilyWsConfig
         $this->setAuthenticationMethod($config);
     }
 
+    public function getCredentials()
+    {
+        switch ($this->authMethod) {
+            case 'password':
+                return [
+                  'mobile' => $this->mobile,
+                  'password' => $this->password
+                ];
+            case 'apiKey':
+                return [
+                  'apiKey' => $this->apiKey
+                ];
+            case 'auto':
+                return $this->getAutoCredentials();
+        }
+        
+    }
+    
     public function getAuthenticationMethod()
     {
         return $this->authMethod;
@@ -67,5 +85,18 @@ class MobilyWsConfig
         }
 
         throw CouldNotSendNotification::withErrorMessage('Please set the authentication method in the mobilyws config file');
+    }
+    
+    protected function getAutoCredentials()
+    {
+        if ($this->apiKey) {
+            return [
+              'apiKey' => $this->apiKey
+            ];
+        }
+        return [
+            'mobile' => $this->mobile,
+            'password' => $this->password
+        ];
     }
 }
