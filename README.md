@@ -60,12 +60,12 @@ You could send requests using your login credentials (mobile/password),
  
 You must add mobily.ws credentials to your `.env` file.
 ```
-// Mobile number and password used for log in.
+# Mobile number and password used for log in.
 MOBILY_WS_MOBILE= 
 MOBILY_WS_PASSWORD=
-// or your apiKey:
+# or your apiKey:
 MOBILY_WS_API_KEY=
-// name/number of the sender which must be approved by mobily.ws for GCC
+# name/number of the sender which must be approved by mobily.ws for GCC
 MOBILY_WS_SENDER=
 ```
 ##### Which method to use:
